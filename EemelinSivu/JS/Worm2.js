@@ -9,6 +9,8 @@ var sideLength = 5;
 var gameSpeed = 700;
 var cust = false;
 var gridExist = false;
+var windowSize = Math.floor(Math.min(window.innerWidth*0.7, window.innerHeight*0.7-100, 700));
+console.log(windowSize);
 
 window.addEventListener("keydown", direction);
 
@@ -38,7 +40,6 @@ function startGame(){
     segmentY = [1];
     segmentdir = [4];
     hitWall = false;
-    food = {x:3, y:3};
     generateFood();
     Draw();
 }
@@ -130,7 +131,7 @@ console.log(segmentX[0]+","+segmentY[0]+" is head position");
 
 function Draw() {
     var p = Math.PI;
-    var u = 700/sideLength;
+    var u = windowSize/sideLength;
     var r = 0.45*u;
     var wormCell = document.getElementsByClassName("wormCell");
     console.log("Canvas elements to be deleted: "+wormCell.length);
@@ -143,19 +144,13 @@ function Draw() {
         {
             console.log("Draw started");
             document.getElementById("cell"+segmentX[i]+","+segmentY[i]).insertAdjacentHTML("beforeend", "\
-            <canvas class='wormCell' id='wormSeg"/*EK*/+i+"' width='"+700/sideLength+"' height='"+700/sideLength+"' style='position:absolute'></canvas>\
+            <canvas class='wormCell' id='wormSeg"/*EK*/+i+"' width='"+u+"' height='"+u+"' style='position:absolute'></canvas>\
             ");
             var wormCanvas = document.getElementById("wormSeg"+i);
             var context = wormCanvas.getContext("2d");
-            context.arc(0.5*700/sideLength,0.5*700/sideLength,0.45*700/sideLength,0,p*2);
-            if (i == 0) {
-                context.fillStyle = "#777777";
-                context.fill();
-            } else {
-                context.fillStyle = "black";
-                context.fill();
-            }
-            
+
+
+            context.fillStyle = "black";
             if (i == 0 && Worm.segments > 1) {
                 switch (segmentdir[0]) {
                     case (1):
@@ -248,11 +243,22 @@ function Draw() {
                 }
                 
             }
+            context.closePath();
+            context.beginPath();
+            context.arc(0.5*u,0.5*u,0.45*u,0,p*2);
+            if (i == 0) {
+                context.fillStyle = "#777777";
+                context.fill();
+            } else {
+                context.fillStyle = "black";
+                context.fill();
+            }
         }
     }
 }
 
 function generateFood() {
+    var u = windowSize/sideLength;
     var foodCell = document.getElementById("food");
     if(foodCell !== null){foodCell.parentNode.removeChild(foodCell)};
     food.x = Math.floor((Math.random() * sideLength) + 1);
@@ -265,11 +271,11 @@ function generateFood() {
     }
     //draw food
     document.getElementById("cell"+food.x+","+food.y).insertAdjacentHTML("beforeend", "\
-    <canvas id='food' width='"+700/sideLength+"' height='"+700/sideLength+"' style='position:absolute'></canvas>\
+    <canvas id='food' width='"+u+"' height='"+u+"' style='position:absolute'></canvas>\
     ");
     var foodCanvas = document.getElementById("food");
     var context = foodCanvas.getContext("2d");
-    context.arc(0.5*700/sideLength, 0.5*700/sideLength, 0.5*700/sideLength, 0, Math.PI *8);
+    context.arc(0.5*u, 0.5*u, 0.5*u, 0, Math.PI *8);
     context.fillStyle = "red";
     context.fill(); 
 
@@ -308,18 +314,20 @@ function generateCSS() {
 csse = document.getElementById("wormStyle");
 csse.innerHTML = ".worm {\
     margin:auto;\
-    border:10px solid green;\
-    width: 700px;\
-    height: 700px;\
-    margin-top: 50px;\
+    border:5px solid green;\
+    width: "+windowSize+"px;\
+    height: "+windowSize+"px;\
+    margin-top: "+Math.floor(windowSize/15)+"px;\
     display:grid;\
     grid-gap: 0px;\
 }\
 .cell{\
-    min-width:700/"+sideLength+"px;\
-    max-width:700/"+sideLength+"px;\
-    min-height:700/"+sideLength+"px;\
-    max-height:700/"+sideLength+"px;\
+    min-width:"+Math.floor(windowSize/sideLength)+"px;\
+    max-width:"+Math.floor(windowSize/sideLength)+"px;\
+    min-height:"+Math.floor(windowSize/sideLength)+"px;\
+    max-height:"+Math.floor(windowSize/sideLength)+"px;\
+    margin:0px;\
+    padding:0px;\
 }\
 ";
 }
