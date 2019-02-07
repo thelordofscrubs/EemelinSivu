@@ -6,7 +6,8 @@
 }
 
 #gameCanvas {
-    width:100%;
-    height:100%;
+    width:1000px;
+    height:500px;
+    position: absolute;
     background-color:#70ba6f;
 }
