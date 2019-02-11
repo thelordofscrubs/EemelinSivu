@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #gameContainer {
     width:100%;
     height:100% - 50px;
@@ -10,4 +11,17 @@
     height:500px;
     position: absolute;
     background-color:#70ba6f;
+=======
+#gameContainer {
+    width:100%;
+    height:100% - 50px;
+    margin-top:50px;
+
+}
+
+#gameCanvas {
+    width:100%;
+    height:100%;
+    background-color:#70ba6f;
+>>>>>>> e934609dbd71d2d8ce2af3e516fec7d988d9335b
 }

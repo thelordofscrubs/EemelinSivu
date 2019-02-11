@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .worm {
     margin:auto;
     border:10px solid green;
@@ -27,4 +28,35 @@
 #cell11, #cell31, #cell51, #cell22, #cell42, #cell13, #cell33, #cell53, #cell24, #cell44, #cell15, #cell35, #cell55{
     background-color: rgb(192, 192, 192);
 
+=======
+.worm {
+    margin:auto;
+    border:10px solid green;
+    width: 500px;
+    height: 500px;
+    margin-top: 50px;
+    display:grid;
+    grid-gap: 0px;
+    grid-template-columns:100px 100px 100px 100px 100px ;
+    grid-template-areas:"cell11 cell21 cell31 cell41 cell51" 
+                        "cell12 cell22 cell32 cell42 cell52"
+                        "cell13 cell23 cell33 cell43 cell54"
+                        "cell14 cell24 cell34 cell44 cell54"
+                        "cell15 cell25 cell35 cell45 cell55";
+}
+
+
+
+.cell{
+    min-width:100px;
+    max-width:100px;
+    min-height:100px;
+    max-height:100px;
+
+}
+
+#cell11, #cell31, #cell51, #cell22, #cell42, #cell13, #cell33, #cell53, #cell24, #cell44, #cell15, #cell35, #cell55{
+    background-color: rgb(192, 192, 192);
+
+>>>>>>> e934609dbd71d2d8ce2af3e516fec7d988d9335b
 }

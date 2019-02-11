@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var gameTick = 10;
 var baseHealth = 1000;
 var Entities = [];
@@ -59,4 +60,21 @@ function Entity(h, a, s, as, d, e, xC, yC) {
     this.Position(xC,yC);
     this.Velocity(0,0);
     this.direction;
+=======
+var gameTick = 10;
+var baseHealth = 1000;
+
+
+
+
+
+function gameLoop() {
+    Move();
+    Attack();
+    Die();
+    //check if game over
+    if(baseHealth <= 0) {
+
+    }
+>>>>>>> e934609dbd71d2d8ce2af3e516fec7d988d9335b
 }
