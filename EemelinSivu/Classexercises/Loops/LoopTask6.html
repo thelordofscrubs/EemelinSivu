@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+    <link rel="stylesheet", type="text/css", href="../../CSS/main.css"/>
+    <script src="../../JS/Navbar.js"></script>
+    <script src="LoopTask6.js"></script>
+</head>
+<body>
+<div class="navbar" id="navbar">        
+</div>
+<div style="margin-top:50px"></div>
+<div id="container">
+    <h1>Loop Exercise 8.06</h1>
+    <div id="votesContainer">
+        <h3>Total Votes</h6>
+        <input id="votesField"/>
+    </div>
+    <div id="candContainer">
+        <h3>Number of Candidates</h3>
+        <input id="candField"/>
+        <button onclick="calcVotes();" style="display:block;margin-top:5px;">Calculate</button>
+    </div>
+    <div>
+        <table id="resultsT">
+            <tr>
+                <th>Candidate</th>
+                <th>Comparison Score</th>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+
+
+<style>
+th, td{border-bottom:1px solid gray;
+padding:3px 10px;
+}
+table {
+    border-collapse: collapse;
+}
+tr:nth-child(even) {
+    background-color: rgb(197, 197, 197);
+}
+
+</style>
+<script>NavBar()</script>
+</body>
+
+</html>
