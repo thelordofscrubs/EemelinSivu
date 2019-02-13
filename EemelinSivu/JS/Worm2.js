@@ -280,17 +280,24 @@ function generateFood(x) {
     var u = windowSize/sideLength;
     var foodCell = document.getElementById("food");
     if(foodCell !== null){foodCell.parentNode.removeChild(foodCell)};
-    var ac = {};
+    var ac = [];
     var cl = document.getElementsByClassName("cell");
+    console.log(cl)
     for (var i = 0; i<cl.length; i++) {
-        if (!cl[i].children) {
-            cl[i].className += " openCell";
+        if (!cl[i].childElementCount) {
+            //cl[i].className += " openCell";
+            ac[ac.length] = cl[i];
         }
     }
-    console.log(cl);
-    if (cl.length) {
-        foodCell = document.getElementsByClassName("openCell")[Math.floor(Math.random() * document.getElementsByClassName("openCell").length)];
-        console.log(document.getElementsByClassName("openCell"));
+    console.log(ac);
+    console.log(ac.length)
+    //console.log(ac.length*Math.random())
+    //console.log(Math.floor(Math.random() * ac.length))
+    console.log(ac[Math.floor(Math.random() * ac.length)])
+    if (ac.length) {
+        //foodCell = document.getElementsByClassName("openCell")[Math.floor(Math.random() * document.getElementsByClassName("openCell").length)];
+        //console.log(document.getElementsByClassName("openCell"));
+        foodCell = ac[Math.floor(Math.random() * ac.length)];
         var id = foodCell.id;
         var t = id.split(",");
         food.x = parseInt(t[0].slice(4));

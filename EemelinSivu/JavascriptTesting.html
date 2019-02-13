@@ -44,7 +44,47 @@
     </script>
 </div>
 
+<div id="elementTesting">
+    <div>
 
+    </div>
+    <div>
+        <ol>
+            <li class="list">
+                list element.
+            </li>
+            <li class="list">
+                list element 2
+            </li>
+            <li class="list"></li>
+            <li class="list" id="whitespace">
+                  </li>
+        </ol>
+    </div>
+    <button onclick="elementarray()">click here</button>
+</div>
+
+
+<script>
+    function elementarray() {
+        var el = document.getElementsByClassName("list");
+        var ce = [];
+        console.log("htmldom object"+el);
+        console.log(el)
+        for (var i = 0; i < el.length; i++) {
+            if (el[i].firstChild) {
+                ce[ce.length] = el[i];
+                console.log(el[i].firstChild)
+                console.log("html element from original object"+el[i]);
+                console.log("html element in array needs children"+ce[i]);
+                console.log(ce[i]);
+            }
+        }
+        console.log("array of elements with children"+ce);
+        console.log(ce);
+        
+    }
+</script>
 <script>
 var dir = "0";
 document.addEventListener("keydown", keyPress);
