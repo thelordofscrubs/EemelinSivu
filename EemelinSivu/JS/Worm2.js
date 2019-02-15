@@ -24,12 +24,12 @@ function gameLoop() {
 //check if game should end
     if (Worm.segments >= (sideLength*sideLength)){
         clearInterval(gameTimer);
-//        alert("Congratulations, You Win!");
+        alert("Congratulations, You Win!");
         writeScore(Worm.segments)
         startGame();
     } if (hitWall == true){
         clearInterval(gameTimer);
-//        alert("Nice Job, You Achieved a Length of " + Worm.segments + "!");
+        alert("Nice Job, You Achieved a Length of " + Worm.segments + "!");
         writeScore(Worm.segments)
         startGame();
     }
@@ -78,6 +78,25 @@ function startLoop() {
     gameTimer = setInterval(gameLoop, gameSpeed);
 }
 //End of top-level functions **********************************************************************************
+
+function getName() {
+    var nameBox = document.getElementById("nameField");
+    currentName = nameBox.value;
+    nameBox.value = "Name";
+}
+
+function getNameStart() {
+    window.addEventListener("keydown", enterName);
+    document.getElementById("nameField").value = "";
+}
+
+function enterName(e) {
+    var x = e.keyCode;
+    if (x == 13) {
+        getName();
+        window.removeEventListener("keydown", enterName);
+    }
+}
 
 function scoreObject(n, s) {
     this.name = n;
