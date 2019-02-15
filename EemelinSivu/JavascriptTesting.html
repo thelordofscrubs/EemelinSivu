@@ -64,6 +64,24 @@
     </div>
     <button onclick="elementarray()">click here</button>
 </div>
+<div>
+    <p id ="Okku">
+        <button onclick="printDescending()">Print Descending</button>
+    
+    </p>
+</div>
+
+
+
+<!--************Start of scripts************************************************ -->
+
+<script>
+    function printDescending() {
+        for (var i = 5; i > -1; i--) {
+            document.getElementById("Okku").insertAdjacentHTML("beforeend", "<br>"+i+",");
+        }
+    }
+</script>
 
 
 <script>
