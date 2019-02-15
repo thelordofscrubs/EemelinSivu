@@ -108,7 +108,7 @@ scores[0] = new scoreObject("Eemeli", 50);
 function writeScore(x) {
     var st = document.getElementById("scoreTable");
     scores[scores.length] = new scoreObject(currentName, x);
-    scores.sort(function(a,b){(a.score-b.score)*(-1)});
+    scores.sort(function(a,b){return (a.score-b.score)*(-1)});
     generateScoreTable();
 }
 

@@ -70,10 +70,58 @@
     
     </p>
 </div>
+<div>
+    <p id="objectp">
 
+    </p>
+    <button onclick="displayObjects();">Display current list of objects</button>
+    <button onclick="createObs();">Create Objects</button>
+    <button onclick="sortValue1();">Sort Objects by the first value</button>
+    <button onclick="sortValue12();">Sort Objects by the first value backwards</button>
+    <button onclick="sortValue2();">Sort Objects by their second value</button>
+    <button onclick="sortValue22();">Sort Objects by their second value</button>
+</div>
 
 
 <!--************Start of scripts************************************************ -->
+
+<script>
+    var objectList = [];
+    function displayObjects() {
+        var x = document.getElementById("objectp");
+        var y = "<br><table><tr><th>Name</th><th>Value 1</th><th>Value 2</th></tr>";
+        //console.log(y);
+        console.log(objectList)
+        for (var i = 0; i < objectList.length; i++) {
+            y += "<tr><td>objectList["+i+"]</td><td>"+objectList[i].value1+"</td><td>"+objectList[i].value2+"</td></tr>";
+            //console.log(y);
+        }
+        y += "</table>"
+        x.innerHTML = y;
+    }
+    function countObject(x, y) {
+            this.value1 = x;
+            this.value2 = y;
+        }
+    function createObs() {
+        for (var i = 0; i<5; i++) {
+            objectList[i] = new countObject(i, -i)
+        }
+    }
+    function sortValue1() {
+        console.log("sortValue1")
+        objectList.sort(function (a,b) {return a.value1 - b.value1});
+    }
+    function sortValue12() {
+        objectList.sort(function (a,b) {return b.value1 - a.value1});
+    }
+    function sortValue2() {
+        objectList.sort(function (a,b) {return a.value2 - b.value2});
+    }
+    function sortValue22() {
+        objectList.sort(function (a,b) {return b.value2 - a.value2});
+    }
+</script>
 
 <script>
     function printDescending() {
