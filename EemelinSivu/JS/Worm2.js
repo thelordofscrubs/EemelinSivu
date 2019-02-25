@@ -24,13 +24,19 @@ function gameLoop() {
 //check if game should end
     if (Worm.segments >= (sideLength*sideLength)){
         clearInterval(gameTimer);
-        alert("Congratulations, You Win!");
-        writeScore(Worm.segments)
+        currentName = prompt("Congratulations, You Win!\nPlease enter your name", "Name");
+        if (!currentName) {
+            currentName = "Guest";
+        }
+        writeScore(Worm.segments);
         startGame();
     } if (hitWall == true){
         clearInterval(gameTimer);
-        alert("Nice Job, You Achieved a Length of " + Worm.segments + "!");
-        writeScore(Worm.segments)
+        currentName = prompt("Nice Job, You Achieved a Length of " + Worm.segments + "!\nPlease enter your name", "Name");
+        if (!currentName) {
+            currentName = "Guest";
+        }
+        writeScore(Worm.segments);
         startGame();
     }
 
