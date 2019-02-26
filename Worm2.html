@@ -22,7 +22,8 @@
     <div id="scoreContainer" style="display:inline;margin-left:20px;">
         <input value="Name" onclick="getNameStart()" id="nameField"/>
         <button onclick="getName()" style="display:inline">Submit</button>  
-        <table id="scoreTable">
+        <table id="oScoreTable">
+            <br>High Scores
             <tr>
                 <th>Name</th>
                 <th>Score</th>
@@ -30,6 +31,13 @@
             <tr class="scoreRow">
                 <td>Eemeli</td>
                 <td class="score">50</td>
+            </tr>
+        </table>
+        Local Scores
+        <table id="scoreTable">
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
             </tr>
         </table>
     </div>

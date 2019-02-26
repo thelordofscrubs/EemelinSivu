@@ -12,6 +12,7 @@ var gridExist = false;
 var windowSize = Math.floor(Math.min(window.innerWidth*0.7, window.innerHeight*0.7-100, 700));
 var currentName = "Guest";
 var scores = [];
+var hscores = [];
 console.log(windowSize);
 
 window.addEventListener("keydown", direction);
@@ -25,6 +26,9 @@ function gameLoop() {
     if (Worm.segments >= (sideLength*sideLength)){
         clearInterval(gameTimer);
         currentName = prompt("Congratulations, You Win!\nPlease enter your name", "Name");
+        while (currentName.length > 9) {
+            currentName = prompt("That name was too long, please enter less than 9 character", "Name");
+        }
         if (!currentName) {
             currentName = "Guest";
         }
@@ -33,6 +37,9 @@ function gameLoop() {
     } if (hitWall == true){
         clearInterval(gameTimer);
         currentName = prompt("Nice Job, You Achieved a Length of " + Worm.segments + "!\nPlease enter your name", "Name");
+        while (currentName.length > 9) {
+            currentName = prompt("That name was too long, please enter less than 9 character", "Name");
+        }
         if (!currentName) {
             currentName = "Guest";
         }
@@ -85,6 +92,15 @@ function startLoop() {
 }
 //End of top-level functions **********************************************************************************
 
+function getHScores() {
+    var xr = new XMLHttpRequest();
+    xr.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            
+        }
+    }
+}
+
 function getName() {
     var nameBox = document.getElementById("nameField");
     currentName = nameBox.value;
@@ -114,8 +130,19 @@ scores[0] = new scoreObject("Eemeli", 50);
 function writeScore(x) {
     var st = document.getElementById("scoreTable");
     scores[scores.length] = new scoreObject(currentName, x);
+    var newScore = scores[scores.length-1]
     scores.sort(function(a,b){return (a.score-b.score)*(-1)});
     generateScoreTable();
+    sendScore(newScore);
+}
+
+function sendScore(score) {
+    var xr = new XMLHttpRequest();
+    xr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+
+        }
+    } 
 }
 
 function Eat() {
@@ -392,6 +419,17 @@ function generateScoreTable() {
     for (var i = 0; i < scores.length; i++) {
         sg.insertAdjacentHTML("beforeend" , "\
         <tr class='scoreRow'> <td>"+scores[i].name+"</td> <td class='score'>"+scores[i].score+"</td> </tr>\
+        \
+        ");
+    }
+}
+
+function generateOnScoreTable() {
+    var sg = document.getElementById("oScoreTable");
+    sg.innerHTML = "";
+    for (var i = 0; i < hscores.length; i++) {
+        sg.insertAdjacentHTML("beforeend" , "\
+        <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> </tr>\
         \
         ");
     }
