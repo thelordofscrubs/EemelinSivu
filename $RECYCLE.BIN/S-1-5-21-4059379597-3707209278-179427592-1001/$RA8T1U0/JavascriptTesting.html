@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Eemelin Javascriptit</title>
+    <link rel="stylesheet", type="text/css", href="CSS/main.css"/>
+    <script src="JS/Navbar.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="navbar" id="navbar">
+</div>
+
+<div style="margin-top:100 px; top: 50px;">
+    <p id="pause" style="margin-top:50px">
+        Something
+    </p>
+    <button onclick="alert('Deprecated, check console and press arrow keys');">
+        click
+    </button>
+</div>
+
+<div>
+    <button onclick="removeChildtest();">
+        array removeChild
+    </button>
+    <div><p class="someStuff">this is a p element</p></div>
+    <div><p class="someStuff">this is a p element</p></div>
+    <div><p class="someStuff">this is a p element</p></div>
+    <div><p class="someStuff">this is a p element</p></div>
+    <p id="removechildinfo">the number of elements in the array is 4</p>
+</div>
+<div>
+    <canvas width="100" height="100" id="testCanvas">  </canvas>
+    <script>
+        var x = document.getElementById("testCanvas");
+        var context = x.getContext("2d");
+        context.arc(50,0,45,0,Math.PI);
+        context.fillStyle = "black";
+        context.fill();
+        context.moveTo(50,100);
+        context.arc(50,100,45,Math.PI,Math.PI*2);
+        context.fill();
+    </script>
+</div>
+
+<div id="elementTesting">
+    <div>
+
+    </div>
+    <div>
+        
+        <ol>
+            <li class="list">
+                list element.
+            </li>
+            <li class="list">
+                list element 2
+            </li>
+            <li class="list"></li>
+            <li class="list" id="whitespace">
+                  </li>
+        </ol>
+    </div>
+    <button onclick="elementarray()">click here</button>
+</div>
+<div>
+    <p id ="Okku">
+        <button onclick="printDescending()">Print Descending</button>
+    
+    </p>
+</div>
+<div>
+    <p id="objectp">
+
+    </p>
+    <button onclick="displayObjects();">Display current list of objects</button>
+    <button onclick="createObs();">Create Objects</button>
+    <button onclick="sortValue1();">Sort Objects by the first value</button>
+    <button onclick="sortValue12();">Sort Objects by the first value backwards</button>
+    <button onclick="sortValue2();">Sort Objects by their second value</button>
+    <button onclick="sortValue22();">Sort Objects by their second value</button>
+</div>
+
+
+<!--************Start of scripts************************************************ -->
+
+<script>
+    var objectList = [];
+    function displayObjects() {
+        var x = document.getElementById("objectp");
+        var y = "<br><table><tr><th>Name</th><th>Value 1</th><th>Value 2</th></tr>";
+        //console.log(y);
+        console.log(objectList)
+        for (var i = 0; i < objectList.length; i++) {
+            y += "<tr><td>objectList["+i+"]</td><td>"+objectList[i].value1+"</td><td>"+objectList[i].value2+"</td></tr>";
+            //console.log(y);
+        }
+        y += "</table>"
+        x.innerHTML = y;
+    }
+    function countObject(x, y) {
+            this.value1 = x;
+            this.value2 = y;
+        }
+    function createObs() {
+        for (var i = 0; i<5; i++) {
+            objectList[i] = new countObject(i, -i)
+        }
+    }
+    function sortValue1() {
+        console.log("sortValue1")
+        objectList.sort(function (a,b) {return a.value1 - b.value1});
+    }
+    function sortValue12() {
+        objectList.sort(function (a,b) {return b.value1 - a.value1});
+    }
+    function sortValue2() {
+        objectList.sort(function (a,b) {return a.value2 - b.value2});
+    }
+    function sortValue22() {
+        objectList.sort(function (a,b) {return b.value2 - a.value2});
+    }
+</script>
+
+<script>
+    function printDescending() {
+        for (var i = 5; i > -1; i--) {
+            document.getElementById("Okku").insertAdjacentHTML("beforeend", "<br>"+i+",");
+        }
+    }
+</script>
+
+
+<script>
+    function elementarray() {
+        var el = document.getElementsByClassName("list");
+        var ce = [];
+        console.log("htmldom object"+el);
+        console.log(el)
+        for (var i = 0; i < el.length; i++) {
+            if (el[i].firstChild) {
+                ce[ce.length] = el[i];
+                console.log(el[i].firstChild)
+                console.log("html element from original object"+el[i]);
+                console.log("html element in array needs children"+ce[i]);
+                console.log(ce[i]);
+            }
+        }
+        console.log("array of elements with children"+ce);
+        console.log(ce);
+        
+    }
+</script>
+<script>
+var dir = "0";
+document.addEventListener("keydown", keyPress);
+//function change(){    
+//    alert(dir);
+//    if(dir !== "0"){
+//    document.getElementById("pause").innerHTML = dir;
+//    }   
+//}
+function keyPress(event) {
+    var x = event.keyCode;
+    switch(x) {
+        case 37:
+            console.log("1");
+            dir = "1";
+            break;
+        case 38:
+            console.log("2");
+            dir = "2";
+            break;
+        case 39:
+            console.log("3");
+            dir = "3";
+            break;
+        case 40:
+            console.log("4");
+            dir = "4";
+    }
+    //console.log(dir);
+}
+
+//remove child in array test
+
+function removeChildtest() {
+    var elementArray = document.getElementsByClassName("someStuff");
+    console.log("the number of elements in the array is "+elementArray.length);
+    elementArray[0].parentNode.removeChild(elementArray[0]);
+    console.log("the number of elements in the array is "+elementArray.length);
+}
+
+</script>
+<script>NavBar();</script>
+</body>
+
+</html>

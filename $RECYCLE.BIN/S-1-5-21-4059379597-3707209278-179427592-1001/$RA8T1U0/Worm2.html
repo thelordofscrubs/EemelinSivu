@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Custom Worm Game</title>
+    <link rel="stylesheet", type="text/css", href="CSS/main.css"/>
+    <link rel="stylesheet", type="text/css", href="CSS/Worm2.css"/>
+    <script src="JS/Navbar.js"></script>
+    <script src="JS/Worm2.js"></script>
+</head>
+<body>
+<div class="navbar" id="navbar">        
+</div>
+
+
+<div style="margin-top:50px;justify-content:center;display:flex;">
+    <div style="display:inline">
+        <div class="worm" id="wormGrid">
+
+        </div>
+    </div>
+    <div id="scoreContainer" style="display:inline;margin-left:20px;">
+        <input value="Name" onclick="getNameStart()" id="nameField"/>
+        <button onclick="getName()" style="display:inline">Submit</button>  
+        <table id="scoreTable">
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
+            </tr>
+            <tr class="scoreRow">
+                <td>Eemeli</td>
+                <td class="score">50</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="gameButtons" id="buttons">
+    <button onclick="startGame();startLoop();" style="margin-left:auto">
+        Start Game
+    </button>
+    <h3 style="display:inline" id="displen">
+        The grid is set to be 5x5  
+    </h3>
+    <h3 style="display:inline" id="dispspe">
+        The speed is set to 0.7s
+    </h3>
+    <div>
+        <button id="SizeB" onclick="sizeButton();">
+            Change Size
+        </button>
+    </div>
+    <div>
+        <button id="SpeedB" onclick="speedButton();">
+            Change Speed
+        </button>
+    </div>
+</div>
+
+
+
+
+<style id="wormStyle">
+
+</style>
+<script>NavBar()</script>
+</body>
+
+</html>
