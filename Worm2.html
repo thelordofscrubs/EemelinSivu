@@ -8,7 +8,7 @@
     <script src="JS/Navbar.js"></script>
     <script src="JS/Worm2.js"></script>
 </head>
-<body>
+<body onload="generateOnScoreTable();">
 <div class="navbar" id="navbar">        
 </div>
 
@@ -21,16 +21,14 @@
     </div>
     <div id="scoreContainer" style="display:inline;margin-left:20px;">
         <input value="Name" onclick="getNameStart()" id="nameField"/>
-        <button onclick="getName()" style="display:inline">Submit</button>  
+        <button onclick="getName()" style="display:inline">Submit</button>
+        <br>High Scores  
         <table id="oScoreTable">
-            <br>High Scores
             <tr>
                 <th>Name</th>
                 <th>Score</th>
-            </tr>
-            <tr class="scoreRow">
-                <td>Eemeli</td>
-                <td class="score">50</td>
+                <th>Board Size</th>
+                <th>Game Speed</th>
             </tr>
         </table>
         Local Scores
@@ -38,6 +36,8 @@
             <tr>
                 <th>Name</th>
                 <th>Score</th>
+                <th>Board Size</th>
+                <th>Game Speed</th>
             </tr>
         </table>
     </div>

@@ -25,23 +25,31 @@ function gameLoop() {
 //check if game should end
     if (Worm.segments >= (sideLength*sideLength)){
         clearInterval(gameTimer);
-        currentName = prompt("Congratulations, You Win!\nPlease enter your name", "Name");
-        while (currentName.length > 9) {
-            currentName = prompt("That name was too long, please enter less than 9 character", "Name");
-        }
-        if (!currentName) {
-            currentName = "Guest";
+        if(currentName == "Guest") {
+            currentName = prompt("Congratulations, You Win!\nPlease enter your name", "Name");
+            while (currentName.length > 9) {
+                currentName = prompt("That name was too long, please enter less than 9 character", "Name");
+            }
+            if (!currentName) {
+                currentName = "Guest";
+            }
+        } else {
+            alert("Congratulations, You Win!");
         }
         writeScore(Worm.segments);
         startGame();
     } if (hitWall == true){
         clearInterval(gameTimer);
-        currentName = prompt("Nice Job, You Achieved a Length of " + Worm.segments + "!\nPlease enter your name", "Name");
-        while (currentName.length > 9) {
-            currentName = prompt("That name was too long, please enter less than 9 character", "Name");
-        }
-        if (!currentName) {
-            currentName = "Guest";
+        if(currentName == "Guest") {
+            currentName = prompt("Nice Job, You Achieved a Length of " + Worm.segments + "!\nPlease enter your name", "Name");
+            while (currentName.length > 9) {
+                currentName = prompt("That name was too long, please enter less than 9 character", "Name");
+            }
+            if (!currentName) {
+                currentName = "Guest";
+            }
+        } else {
+            alert("Nice Job, You Achieved a Length of " + Worm.segments + ".");
         }
         writeScore(Worm.segments);
         startGame();
@@ -90,15 +98,26 @@ function direction (e) {
 function startLoop() {
     gameTimer = setInterval(gameLoop, gameSpeed);
 }
+
 //End of top-level functions **********************************************************************************
 
 function getHScores() {
+    console.log("started getHScores");
     var xr = new XMLHttpRequest();
     xr.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200) {
-            
+            x = xr.responseXML;
+            console.log(x);
+            //console.log(x.length);
+            console.log(x.getElementsByTagName("name").length)
+            for (var i = 0;i < x.getElementsByTagName("name").length;i++) {
+                hscores[i] = new scoreObject(x.getElementsByTagName("name")[i].childNodes[0].nodeValue , x.getElementsByTagName("score")[i].childNodes[0].nodeValue , x.getElementsByTagName("size")[i].childNodes[0].nodeValue , x.getElementsByTagName("speed")[i].childNodes[0].nodeValue);
+            }
+            console.log(hscores);
         }
     }
+    xr.open("GET","/XML/Worm2.xml",true);
+    xr.send();
 }
 
 function getName() {
@@ -120,20 +139,23 @@ function enterName(e) {
     }
 }
 
-function scoreObject(n, s) {
+function scoreObject(n, s, z, p) {
     this.name = n;
     this.score = s;
+    this.size = z;
+    this.speed = p;
 }
 
-scores[0] = new scoreObject("Eemeli", 50);
-
 function writeScore(x) {
-    var st = document.getElementById("scoreTable");
-    scores[scores.length] = new scoreObject(currentName, x);
+    scores[scores.length] = new scoreObject(currentName, x, sideLength, gameSpeed);
     var newScore = scores[scores.length-1]
     scores.sort(function(a,b){return (a.score-b.score)*(-1)});
     generateScoreTable();
     sendScore(newScore);
+}
+
+function writeOnlineScore() {
+
 }
 
 function sendScore(score) {
@@ -415,25 +437,42 @@ gridExist = true;
 
 function generateScoreTable() {
     var sg = document.getElementById("scoreTable");
-    sg.innerHTML = "";
+    sg.innerHTML = "<tr>\
+    <th>Name</th>\
+    <th>Score</th>\
+    <th>Board Size</th>\
+    <th>Game Speed</th>\
+    </tr>";
     for (var i = 0; i < scores.length; i++) {
         sg.insertAdjacentHTML("beforeend" , "\
-        <tr class='scoreRow'> <td>"+scores[i].name+"</td> <td class='score'>"+scores[i].score+"</td> </tr>\
+        <tr class='scoreRow'> <td>"+scores[i].name+"</td> <td class='score'>"+scores[i].score+"</td> <td>"+scores[i].size+"</td> <td>"+scores[i].speed+"</td> </tr>\
         \
         ");
     }
 }
 
 function generateOnScoreTable() {
+    getHScores();
     var sg = document.getElementById("oScoreTable");
-    sg.innerHTML = "";
+    console.log("found oTable");
+    sg.innerHTML = "<tr>\
+    <th>Name</th>\
+    <th>Score</th>\
+    <th>Board Size</th>\
+    <th>Game Speed</th>\
+    </tr>";
+    console.log("wrote headers");
+    console.log(hscores.length);
+    console.log(hscores);
     for (var i = 0; i < hscores.length; i++) {
         sg.insertAdjacentHTML("beforeend" , "\
-        <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> </tr>\
+        <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> <td>"+hscores[i].size+"</td> <td>"+hscores[i].speed+"</td> </tr>\
         \
         ");
     }
 }
+
+//window.onload = generateOnScoreTable();
 
 function generateCSS() {
 var leftoverPx = windowSize - Math.ceil(windowSize/sideLength-.6) * sideLength;
