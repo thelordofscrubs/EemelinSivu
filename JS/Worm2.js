@@ -14,6 +14,7 @@ var currentName = "Guest";
 var scores = [];
 var hscores = [];
 var hscoresP;
+var hc = 2;
 console.log(windowSize);
 
 window.addEventListener("keydown", direction);
@@ -31,7 +32,7 @@ function gameLoop() {
             while (currentName.length > 9) {
                 currentName = prompt("That name was too long, please enter less than 9 character", "Name");
             }
-            if (!currentName) {
+            if (!currentName || currentName == "Name") {
                 currentName = "Guest";
             }
         } else {
@@ -46,7 +47,7 @@ function gameLoop() {
             while (currentName.length > 9) {
                 currentName = prompt("That name was too long, please enter less than 9 character", "Name");
             }
-            if (!currentName) {
+            if (!currentName || currentName == "Name") {
                 currentName = "Guest";
             }
         } else {
@@ -150,7 +151,7 @@ function scoreObject(n, s, z, p) {
 }
 
 function writeScore(x) {
-    scores[scores.length] = new scoreObject(currentName, x, sideLength, gameSpeed);
+    scores[scores.length] = new scoreObject(currentName, x, sideLength +"x"+sideLength, gameSpeed);
     var newScore = scores[scores.length-1]
     scores.sort(function(a,b){return (a.score-b.score)*(-1)});
     generateScoreTable();
@@ -414,6 +415,7 @@ function addSegment() {
     segmentY[segmentY.length] = segmentY[segmentY.length-1];
     segmentdir[segmentdir.length] = segmentdir[segmentdir.length-1];
     Worm.segments++;
+    hc++;
     console.log("addSegment ran through, new length is "+Worm.segments);
 
 }
