@@ -13,6 +13,7 @@ var windowSize = Math.floor(Math.min(window.innerWidth*0.7, window.innerHeight*0
 var currentName = "Guest";
 var scores = [];
 var hscores = [];
+var hscoresP;
 console.log(windowSize);
 
 window.addEventListener("keydown", direction);
@@ -102,22 +103,24 @@ function startLoop() {
 //End of top-level functions **********************************************************************************
 
 function getHScores() {
-    console.log("started getHScores");
-    var xr = new XMLHttpRequest();
-    xr.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200) {
-            x = xr.responseXML;
-            console.log(x);
-            //console.log(x.length);
-            console.log(x.getElementsByTagName("name").length)
-            for (var i = 0;i < x.getElementsByTagName("name").length;i++) {
-                hscores[i] = new scoreObject(x.getElementsByTagName("name")[i].childNodes[0].nodeValue , x.getElementsByTagName("score")[i].childNodes[0].nodeValue , x.getElementsByTagName("size")[i].childNodes[0].nodeValue , x.getElementsByTagName("speed")[i].childNodes[0].nodeValue);
+        console.log("started getHScores");
+        var xr = new XMLHttpRequest();
+        console.log(xr);
+        xr.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                console.log(this.responseXML);
+                var x = this.responseXML;
+                console.log(x);
+                //console.log(x.length);
+                console.log(x.getElementsByTagName("name").length)
+                for (var i = 0;i < x.getElementsByTagName("name").length;i++) {
+                    hscores[i] = new scoreObject(x.getElementsByTagName("name")[i].childNodes[0].nodeValue , x.getElementsByTagName("score")[i].childNodes[0].nodeValue , x.getElementsByTagName("size")[i].childNodes[0].nodeValue , x.getElementsByTagName("speed")[i].childNodes[0].nodeValue);
+                }
+                console.log(hscores);
             }
-            console.log(hscores);
         }
-    }
-    xr.open("GET","/XML/Worm2.xml",true);
-    xr.send();
+        xr.open("GET","/XML/Worm2.xml",true);
+        xr.send();
 }
 
 function getName() {
@@ -462,14 +465,16 @@ function generateOnScoreTable() {
     <th>Game Speed</th>\
     </tr>";
     console.log("wrote headers");
-    console.log(hscores.length);
     console.log(hscores);
-    for (var i = 0; i < hscores.length; i++) {
-        sg.insertAdjacentHTML("beforeend" , "\
-        <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> <td>"+hscores[i].size+"</td> <td>"+hscores[i].speed+"</td> </tr>\
-        \
-        ");
-    }
+    console.log(hscores.length);
+    window.setTimeout(function() {
+        for (var i = 0; i < hscores.length; i++) {
+            sg.insertAdjacentHTML("beforeend" , "\
+            <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> <td>"+hscores[i].size+"</td> <td>"+hscores[i].speed+"</td> </tr>\
+            \
+            ");
+        }}
+    ,500)
 }
 
 //window.onload = generateOnScoreTable();
