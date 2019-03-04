@@ -164,11 +164,14 @@ function writeOnlineScore() {
 
 function sendScore(score) {
     var xr = new XMLHttpRequest();
-    xr.onreadystatechange = function () {
+    xr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-
+            generateOnScoreTable();
         }
-    } 
+    }
+    var hscorejson = JSON.stringify(score);
+    xr.open("GET", "/PHP/Worm2.php?q="+hscorejson,true)
+ 
 }
 
 function Eat() {
