@@ -163,15 +163,21 @@ function writeOnlineScore() {
 }
 
 function sendScore(score) {
+    console.log("started senScore");
     var xr = new XMLHttpRequest();
     xr.onreadystatechange = function() {
+        console.log("ready state is"+ xr.readyState);
         if (this.readyState == 4 && this.status == 200) {
+            console.log("sendscore php returned status 200");
             generateOnScoreTable();
+        }
+        if (this.responseText) {
+            console.log(this.responseText);
         }
     }
     var hscorejson = JSON.stringify(score);
     xr.open("GET", "/PHP/Worm2.php?q="+hscorejson+"&w="+hc,true)
- 
+    xr.send();
 }
 
 function Eat() {
