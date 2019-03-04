@@ -1,1 +1,28 @@
-toFixed(doctorsFee, 2);
+<nav>
+    <a>
+    <a>
+    <div id="nava">
+        <a>
+    </div>
+</nav>
+
+
+<style>
+    nav {
+        position:fixed;
+        left:0;
+        height:100%;
+        width:5;
+        background-color:grey;
+    }
+    nav>a {
+        decoration:none;
+        float:top;
+    }
+    nav>a:hover {
+        color:black
+    }
+    #nava {
+        float:bottom;
+    }
+</style>
