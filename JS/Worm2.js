@@ -151,7 +151,7 @@ function scoreObject(n, s, z, p) {
 }
 
 function writeScore(x) {
-    scores[scores.length] = new scoreObject(currentName, x, sideLength +"x"+sideLength, gameSpeed);
+    scores[scores.length] = new scoreObject(currentName, x, sideLength, gameSpeed);
     var newScore = scores[scores.length-1]
     scores.sort(function(a,b){return (a.score-b.score)*(-1)});
     generateScoreTable();
@@ -453,7 +453,7 @@ function generateScoreTable() {
     </tr>";
     for (var i = 0; i < scores.length; i++) {
         sg.insertAdjacentHTML("beforeend" , "\
-        <tr class='scoreRow'> <td>"+scores[i].name+"</td> <td class='score'>"+scores[i].score+"</td> <td>"+scores[i].size+"</td> <td>"+scores[i].speed+"</td> </tr>\
+        <tr class='scoreRow'> <td>"+scores[i].name+"</td> <td class='score'>"+scores[i].score+"</td> <td>"+scores[i].size+" x "+scores[i].size+"</td> <td>"+scores[i].speed+"</td> </tr>\
         \
         ");
     }
@@ -475,7 +475,7 @@ function generateOnScoreTable() {
     window.setTimeout(function() {
         for (var i = 0; i < hscores.length; i++) {
             sg.insertAdjacentHTML("beforeend" , "\
-            <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> <td>"+hscores[i].size+"</td> <td>"+hscores[i].speed+"</td> </tr>\
+            <tr class='scoreRow'> <td>"+hscores[i].name+"</td> <td class='score'>"+hscores[i].score+"</td> <td>"+hscores[i].size+"x"+hscores[i].size+"</td> <td>"+hscores[i].speed+"</td> </tr>\
             \
             ");
         }}

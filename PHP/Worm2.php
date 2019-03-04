@@ -1,29 +1,48 @@
 <?php
 
-$scoreob = json.decode($_REQUEST["q"], false);
+$newscore = json.decode($_REQUEST["q"], false);
 $hc = $_REQUEST["w"];
+$scores = [];
 
-if $hc < ($scoreob->score) {
+if $hc < ($newscore->score) {
     exit("hc");
 }
 
-$score = $scoreob->score;
-$name = $scoreob->name;
-$speed = $scoreob->speed;
-$size = $scoreob->size;
+$score = $newscore->score;
+$name = $newscore->name;
+$speed = $newscore->speed;
+$size = $newscore->size;
+$hs = (($score/$size)*10)-$speed;
 
 $xmldom = new DomDocument();
 $xmldom->load("/XML/Worm2.xml");
+for ($i = 0; $i < $xmldom->getElementsByTagName("name")->length; $i++ ) {
+    $scores[$i]->score = (int)$xmldom->getElementsByTagName("score")[$i]->firstChild->nodeValue;
+    $scores[$i]->size = (int)$xmldom->getElementsByTagName("size")[$i]->firstChild->nodeValue;
+    $scores[$i]->speed = (int)$xmldom->getElementsByTagName("speed")[$i]->firstChild->nodeValue;
+    $scores[$i]->name = $xmldom->getElementsByTagName("name")[$i]->firstChild->nodeValue;
+    $scores[$i]->hs = (int)$xmldom->getElementsByTagName("scoreH")[$i]->firstChild->nodeValue;
+}
 
-if $
+if ($scores->length < 5) {
+    pushScore();
+}
+
+if ($hs < $scores[$scores->length]->hs) {
+exit("smaller than smallest score");
+}
 
 
 
 
 
+function pushScore() {
+    $loc = sortScores();
+}
 
+function sortScores() {
 
-
+}
 
 
 

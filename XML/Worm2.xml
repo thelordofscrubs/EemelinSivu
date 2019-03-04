@@ -8,7 +8,7 @@
         100
     </score>
     <size>
-        10x10
+        10
     </size>
     <speed>
         100
@@ -25,13 +25,13 @@
         25
     </score>
     <size>
-        5x5
+        5
     </size>
     <speed>
         100
     </speed>
     <scoreH>
-        25
+        150
     </scoreH>
 </scorev>
 </scores>
