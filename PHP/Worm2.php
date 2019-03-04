@@ -4,7 +4,7 @@ $newscore = json.decode($_REQUEST["q"], false);
 $hc = $_REQUEST["w"];
 $scores = [];
 
-if $hc < ($newscore->score) {
+if ($hc < $newscore->score) {
     exit("hc");
 }
 
@@ -28,9 +28,12 @@ if ($scores->length < 5) {
     pushScore();
 }
 
-if ($hs < $scores[$scores->length]->hs) {
+if ($hs <= $scores[$scores->length]->hs) {
 exit("smaller than smallest score");
+} else {
+    pushScore();
 }
+
 
 
 
@@ -38,10 +41,21 @@ exit("smaller than smallest score");
 
 function pushScore() {
     $loc = sortScores();
+    if ($scores->length <) {
+
+    }
+    $xmldom->getElementsByTagName("scorev")[]->removeChild
 }
 
 function sortScores() {
-
+    $spot = 4;
+    for($i = 0;$i < $scores->length;$i++) {
+        if ($hs > ) {
+            $spot = $i;
+            break;
+        }
+    }
+    return $spot;
 }
 
 
