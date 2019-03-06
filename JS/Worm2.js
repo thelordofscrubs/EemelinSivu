@@ -18,6 +18,8 @@ var hc = 2;
 console.log(windowSize);
 
 window.addEventListener("keydown", direction);
+document.onloadend = getCookies();
+window.beforeunload = saveCookies();
 
 function gameLoop() {
         console.log("start of game loop");
@@ -102,6 +104,26 @@ function startLoop() {
 }
 
 //End of top-level functions **********************************************************************************
+
+function saveCookies() {
+    var d = new Date();
+    d.setTime(d.getTime() + (365*24*60*60*1000));
+    console.log(JSON.stringify(scores));
+    var cStr = "scores="+JSON.stringify(scores)+";expires="+d.toUTCString()+";path=/Worm2.html";
+    //console.log(d.toUTCString());
+    document.cookie = "expires=-1;path=/Worm2.html";
+    document.cookie = cStr;
+    //console.log(document.cookie);
+}
+
+function getCookies() {
+    if (document.cookie) {
+        var x = decodeURIComponent(document.cookie);
+        x.split(';',1);
+        //console.log(x);
+        scores = JSON.parse(x);
+    }
+}
 
 function getHScores() {
         console.log("started getHScores");
