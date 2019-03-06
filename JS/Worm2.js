@@ -16,10 +16,11 @@ var hscores = [];
 var hscoresP;
 var hc = 2;
 console.log(windowSize);
-
+console.log(document.cookie);
 window.addEventListener("keydown", direction);
-document.onloadend = getCookies();
-window.beforeunload = saveCookies();
+//document.onloadend = setTimeout(getCookies(),500);
+//window.beforeunload = saveCookies();
+window.addEventListener("beforeunload",saveCookies);
 
 function gameLoop() {
         console.log("start of game loop");
@@ -110,8 +111,9 @@ function saveCookies() {
     d.setTime(d.getTime() + (365*24*60*60*1000));
     console.log(JSON.stringify(scores));
     var cStr = "scores="+JSON.stringify(scores)+";expires="+d.toUTCString()+";path=/Worm2.html";
+    console.log(cStr);
     //console.log(d.toUTCString());
-    document.cookie = "expires=-1;path=/Worm2.html";
+    //document.cookie = "expires=-1;path=/Worm2.html";
     document.cookie = cStr;
     //console.log(document.cookie);
 }
@@ -119,9 +121,10 @@ function saveCookies() {
 function getCookies() {
     if (document.cookie) {
         var x = decodeURIComponent(document.cookie);
-        x.split(';',1);
-        //console.log(x);
-        scores = JSON.parse(x);
+        x = x.slice(document.cookie.search("scores"),document.cookie.indexOf(";",document.cookie.search("scores")));
+        console.log(x);
+        scores = JSON.parse(x.slice(7));
+        generateScoreTable();
     }
 }
 
@@ -176,12 +179,18 @@ function writeScore(x) {
     scores[scores.length] = new scoreObject(currentName, x, sideLength, gameSpeed);
     var newScore = scores[scores.length-1]
     scores.sort(function(a,b){return (a.score-b.score)*(-1)});
+    if (scores.length > 5) {
+        scores.length = 5;
+    }
     generateScoreTable();
     sendScore(newScore);
 }
 
-function writeOnlineScore() {
-
+function generateScore(tsc) {
+    var z = currentName;
+    currentName = "forTestingOnly";
+    writeScore(tsc);
+    currentName=z;
 }
 
 function sendScore(score) {
