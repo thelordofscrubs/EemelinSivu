@@ -120,7 +120,9 @@ function saveCookies() {
 
 function getCookies() {
     if (document.cookie) {
+        console.log(document.cookie);
         var x = decodeURIComponent(document.cookie);
+        console.log(x);
         x = x.slice(document.cookie.search("scores"),document.cookie.indexOf(";"));
         console.log(x);
         scores = JSON.parse(x.slice(7));
