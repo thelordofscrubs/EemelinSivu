@@ -121,7 +121,7 @@ function saveCookies() {
 function getCookies() {
     if (document.cookie) {
         var x = decodeURIComponent(document.cookie);
-        x = x.slice(document.cookie.search("scores"),document.cookie.indexOf(";",document.cookie.search("scores")));
+        x = x.slice(document.cookie.search("scores"),document.cookie.indexOf(";"));
         console.log(x);
         scores = JSON.parse(x.slice(7));
         generateScoreTable();
