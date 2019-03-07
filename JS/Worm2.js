@@ -123,6 +123,7 @@ function getCookies() {
         console.log(document.cookie);
         var x = decodeURIComponent(document.cookie);
         console.log(x);
+        //for some reason document.cookie.indexOf(";") was cutting off the last square bracket on only the actual server and this "temporary" fix is the best i could come up with
         x = x.slice(document.cookie.search("scores"),document.cookie.indexOf("]")+1);
         console.log(x);
         scores = JSON.parse(x.slice(7));
