@@ -155,7 +155,10 @@ function getHScores() {
 function getName() {
     var nameBox = document.getElementById("nameField");
     currentName = nameBox.value;
-    nameBox.value = "Name";
+    if (!currentName || currentName == "Name") {
+        currentName = "Guest";
+    }
+    alert("That was an invalid name");
 }
 
 function getNameStart() {
