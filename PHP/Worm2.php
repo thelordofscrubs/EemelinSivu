@@ -12,7 +12,7 @@ $score = $newscore->score;
 $name = $newscore->name;
 $speed = $newscore->speed;
 $size = $newscore->size;
-$hs = (($score/$size)*10+$score)-$speed/10+200;
+$hs = (($score/$size)*10+$score)-$speed/80+20;
 
 $xmldom = new DomDocument();
 $xmldom->load('../XML/Worm2.xml');
