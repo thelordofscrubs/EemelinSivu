@@ -157,8 +157,9 @@ function getName() {
     currentName = nameBox.value;
     if (!currentName || currentName == "Name") {
         currentName = "Guest";
+        alert("That was an invalid name");
     }
-    alert("That was an invalid name");
+    
 }
 
 function getNameStart() {
