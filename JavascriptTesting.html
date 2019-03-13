@@ -11,7 +11,7 @@
 <div class="navbar" id="navbar">
 </div>
 
-<div style="margin-top:100 px; top: 50px;">
+<div style="margin-top:100 px; top: 50px;border: 1px solid black;">
     <p id="pause" style="margin-top:50px">
         Something
     </p>
@@ -20,7 +20,7 @@
     </button>
 </div>
 
-<div>
+<div style="border: 1px solid black;margin-top:20px;">
     <button onclick="removeChildtest();">
         array removeChild
     </button>
@@ -30,7 +30,7 @@
     <div><p class="someStuff">this is a p element</p></div>
     <p id="removechildinfo">the number of elements in the array is 4</p>
 </div>
-<div>
+<div style="border: 1px solid black;margin-top:20px;">
     <canvas width="100" height="100" id="testCanvas">  </canvas>
     <script>
         var x = document.getElementById("testCanvas");
@@ -44,7 +44,7 @@
     </script>
 </div>
 
-<div id="elementTesting">
+<div id="elementTesting" style="border: 1px solid black;margin-top:20px;">
     <div>
 
     </div>
@@ -64,13 +64,13 @@
     </div>
     <button onclick="elementarray()">click here</button>
 </div>
-<div>
+<div style="border: 1px solid black;margin-top:20px;">
     <p id ="Okku">
         <button onclick="printDescending()">Print Descending</button>
     
     </p>
 </div>
-<div>
+<div style="border: 1px solid black;margin-top:20px;">
     <p id="objectp">
 
     </p>
@@ -81,17 +81,46 @@
     <button onclick="sortValue2();">Sort Objects by their second value</button>
     <button onclick="sortValue22();">Sort Objects by their second value</button>
 </div>
-<div id="loop define variable">
+<div id="loop define variable" style="margin-top:20px; border: 1px solid black;">
 <button id="loop def" onclick="loopdefvar();">variable defined inside loop</button>
+<p id="ldfout"></p>
 </div>
-
+<div id="mai" style="margin-top:20px; border: 1px solid black;">
+    <h3>Start of scripts for Mai</h3>
+    <button onclick="createObject()">Objecttest</button>
+    <p id="maiout1"></p>
+</div>
 <!--************Start of scripts************************************************ -->
 <script>
+//Everything inside this script tag is for what Mai remembers from the test
 
+
+//Object constructor -- usage is
+//var x = new testOb(y, z)
+//where y and z are any integers
+class testOb{
+    constructor(a, b) {
+        this.value1 = a;
+        this.value2 = b;
+    }
+}
+function createObject() {
+    var x = document.getElementById("maiout1");
+    x.innerHTML = "Number of objects:\
+    <input id='maiin1' value='number of objects'/><br>\
+    Range from :<br>\
+    <input id='maiin2' value='start of range'/><br>\
+    To:<br>\
+    <br>\
+    <button onclick='createObject2();'>Submit</button>";
+}
+</script>
+<script>
 function loopdefvar () {
-    var x = document.getElementById("loop define variable");
+    var x = document.getElementById("ldfout");
+    x.innerHTML = "";
     for (var i = 0; i < 6; i++) {
-        x.insertAdjacentHTML("beforeend", i);
+        x.insertAdjacentHTML("beforeend", i+"<br>");
     }
     x.insertAdjacentHTML("beforeend", i);
 }
