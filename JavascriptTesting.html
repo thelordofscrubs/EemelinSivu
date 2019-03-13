@@ -96,11 +96,44 @@
         <button onclick="printints()">Print 100-500 but not 299</button>
         <p id="maiout2" style="height:130px;overflow:scroll;scroll-snap-type:mandatory;scroll-behavior: smooth"></p>
     </div>
+    <div id="mai3" style="border:1px solid black;margin:20px;">
+        <button onclick="findOcc()">Find number of times value appears in array</button>
+        <p id="maiout3">This function creates an array with 100 random integers(1-10)
+        and then finds the amount of times the first integer in the array appears in said array</p>
+    </div>
 </div>
 <!--************Start of scripts************************************************ -->
 <script>
 //Everything inside this script tag is for what Mai remembers from the test
-
+var ar = [];
+//declaring as a global so it can be accessed elsewhere
+function findOcc() {
+    var o = document.getElementById("maiout3");
+    var conInc = 0;
+    //populate array with 100 random integers
+    for (var i = 0; i < 100 ; i++) {
+        ar[i] = Math.floor(Math.random()*10 + 1)
+    }
+    //loop through values in the array
+    //there is an easier way to do this involving calling an array method called forEach. for example:
+    /*
+    ar.forEach(function checkIfSame(a) {
+        if (a == ar[0]) {
+            conInc++;
+        }
+    });
+    */
+    for (var i = 0 ; i < ar.length ; i++) {
+        //console.log(ar[i])
+        if (ar[i] == ar[0]) {
+            //conditional increment
+            conInc++
+        }
+    }
+    o.innerHTML = "The first value in array ar[] is "+ar[0]+".<br>\
+    The amount of times the value "+ar[0]+" appears in the array is "+conInc+".<br>\
+    Press this button to display the array in the console window:<button onclick='console.log(ar);'>Display in Console</button>";
+}
 
 function printints() {
     //this function should be fairly self explanatory
