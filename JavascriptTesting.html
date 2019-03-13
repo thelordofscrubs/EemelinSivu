@@ -105,16 +105,38 @@
         <button onclick="findEndTime()">Find end of shift</button>
         <p id="maiout4">This function Finds the end time of your shift</p>
     </div>
+    <div id="mai5" style="border:1px solid black;margin:20px;">
+        <button onclick="findDrop()">Find temperature drop</button>
+        <p id="maiout5">This function generates 30 random integers from -10 to 10 and finds the biggest "drop" in the array</p>
+    </div>
 </div>
 <!--************Start of scripts************************************************ -->
 <script>
 //Everything inside this script tag is for what Mai remembers from the test
 
+function findDrop() {
+    var o = document.getElementById("maiout5");
+    var ta = [];
+    var bd = {drop:-10,index:-1};
+    for (var i = 0 ; i < 30 ; i++) {
+        ta[i] = Math.floor(Math.random()*21 - 10);
+    }
+    o.innerHTML = "<br>The array of temperatures contains the following values: "+ta+"<br>";
+    for (var i = 0 ; i < 29 ; i++) {
+        var tDrop = ta[i] - ta[i+1];
+        if (tDrop > bd.drop) {
+            bd.drop = tDrop;
+            bd.index = i;
+        }
+    }
+    o.insertAdjacentHTML("beforeend","The biggest drop in temperature was "+bd.drop+" degrees, and it occured between day "+(bd.index+1)+" and day "+(bd.index+2));
+}
+
 function findEndTime() {
     var o = document.getElementById("maiout4");
     o.innerHTML = "Please input the starting time of your shift(0:00-23:59): <input id='maiin4' value='Starting Time' onclick='this.value=\"\"'/><br>\
     Please input the length of your shift(0h1m-23h59m): <input id='maiin42' value='Shift Length' onclick='this.value=\"\"'/><br>\
-    <button onclick='findEndTime2();'>Submit</button>"
+    <button onclick='findEndTime2();'>Submit</button>";
 }
 
 function findEndTime2() {
@@ -155,6 +177,7 @@ function findEndTime2() {
     while (endTime[0] >= 24) {
         endTime[0] -= 24;
     }
+    //making the minute number have a 0 in front if it is between 0 and 9
     if (endTime[1].toString().length == 1) {
         endTime[1] = "0" + endTime[1].toString();
     }
