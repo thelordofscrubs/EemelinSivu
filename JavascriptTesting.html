@@ -85,10 +85,16 @@
 <button id="loop def" onclick="loopdefvar();">variable defined inside loop</button>
 <p id="ldfout"></p>
 </div>
+<!--this bit is the examples from what Mai remembers-->
 <div id="mai" style="margin-top:20px; border: 1px solid black;">
     <h3>Start of scripts for Mai</h3>
-    <button onclick="createObject()">Objecttest</button>
-    <p id="maiout1"></p>
+    <div id="mai1" style="border:1px solid black;margin:20px;">
+        <button onclick="createObject()">Objecttest</button>
+        <p id="maiout1"></p>
+    </div>
+    <div id="mai2" style="border:1px solid black;margin:20px;">
+        <button></button>
+    </div>
 </div>
 <!--************Start of scripts************************************************ -->
 <script>
@@ -143,9 +149,10 @@ function createObject() {
     <button onclick='createObject2();'>Submit</button>";
 }
 //function called by button submitting info
-function createObject2() {
     //declaring list of objects
     var maioblist = [];
+    //switched to global variable cause I messed up
+function createObject2() {
     //number of objects to make
     var n = parseInt(document.getElementById("maiin1").value);
     //start of range for random values
@@ -164,7 +171,112 @@ function createObject2() {
         o.insertAdjacentHTML("beforeend", "maioblist["+i+"] contains the object:<br>\
         {value1:"+maioblist[i].value1+", value2:"+maioblist[i].value2+", valuer:"+maioblist[i].valuer+"}<br>");
     }
-    o.insertAdjacentHTML("beforeend","where value1 and value2 are the inputted range, and valuer is the outputted random int<br>");
+    o.insertAdjacentHTML("beforeend","where value1 and value2 are the inputted range, and valuer is the outputted random int<br>\
+    <button onclick='createObject3()'>consolelog some object math</button>");
+}
+function createObject3() {
+    var o = document.getElementById("maiout1");
+    //JSON.stringify turns the list of objects into a readable string
+    var x = JSON.stringify(maioblist);
+    //making the object list more readable with specified indexes and spacing
+    var a = false;
+    //a is not required here, but is a failsafe against an infinite while loop
+    var i = 0;
+    //I cant use a for loop here(at least not easily) so I'm using manual incrementing
+    var y = []
+    //declaring the list of strings representing objects
+
+    //this while loop splits the string of objects into individual strings with just one object each. I later realized this was very ineffective
+    //a better solution would simply be
+    //for (var i = 0; i < maioblist.length ; i++) {y[i] = JSON.stringify(maioblist[i]);}
+    while (a == false) {
+        if (!x.includes("},{")) {
+            y[i] = x;
+            a = true;
+            break;
+        }
+        var obpos = x.indexOf("},{");
+        y[i] = x.slice(0,obpos+1);
+        x = x.slice(obps+2);
+        i++; 
+    }
+    //var y = x.split(",");
+    o.innerHTML = "";
+    for (var i = 0 ; i < y.length ; i++) {
+        o.insertAdjacentHTML("beforeend", "Object "+(i+1)+" = "+y[i]+"<br>");
+    }
+    //setting up user input for next function
+    o.insertAdjacentHTML("beforeend","<br>type in values you want to use in format \"objectNumber.valuename\" for example: '2.valuer' or '1.value2'<br>This will output to the console.<br>\
+    <input id = 'maiin1' value='value 1' onclick='this.value=\"\"'/><br>\
+    <input id = 'maiin2' value='value 2' onclick='this.value=\"\"'/><br>\
+    <button onclick=CO('m');>Multiply</button><br>\
+    <button onclick=CO('d');>Divide</button><br>\
+    <button onclick=CO('a');>Add</button><br>\
+    <button onclick=CO('s');>Subtract</button><br>\
+    ");
+}
+function CO(m) {
+    //function called by buttons with the local variable m being an argument passed by the buttons. used to see which operation to use
+    var vr = document.getElementById("maiin1").value;
+    //splitting the string so we have the object's index in the array (+1, because user doesn't know the array is from 0 to length-1)
+    //split returns an array with 2 strings, one from either side of the .
+    //x1[0] holds object index in array
+    //x1[1] holds the name of the value we want from the object 
+    var x1 = vr.split(".");
+    //obn1 is the proper index of the object
+    var obn1 = parseInt(x1[0])-1;
+    //switch case to determine which value was requested
+    switch (x1[1]) {
+        case "value1":
+            var v1 = maioblist[obn1].value1;
+            break;
+        case "value2":
+            var v1 = maioblist[obn1].value2;
+            break;
+        case "valuer":
+            var v1 = maioblist[obn1].valuer;
+            break;
+        default:
+            console.log("There was a problem resolving the value type to return. The input must be value1, value2, or valuer");
+    }
+    //repeat for second value
+    //reusing vr variable becase it saves space
+    vr = document.getElementById("maiin2").value;
+    var x2 = vr.split(".");
+    var obn2 = parseInt(x2[0])-1;
+    switch (x2[1]) {
+        case "value1":
+            var v2 = maioblist[obn2].value1;
+            break;
+        case "value2":
+            var v2 = maioblist[obn2].value2;
+            break;
+        case "valuer":
+            var v2 = maioblist[obn2].valuer;
+            break;
+        default:
+            console.log("There was a problem resolving the value type to return. The input must be value1, value2, or valuer");
+    }
+    //final switch case that operates off of which button was pressed (argument m)
+    //displays comprehensive text detailing what happened
+    switch(m) {
+        case "m":
+            console.log("the result of maioblist["+obn1+"]."+x1[1]+" * maioblist["+obn2+"]."+x2[1]+" ("+v1+"*"+v2+") = "+(v1*v2));
+            console.log("or more simply, a.b * c.d = int");
+            break;
+        case "d":
+            console.log("the result of maioblist["+obn1+"]."+x1[1]+" / maioblist["+obn2+"]."+x2[1]+" ("+v1+"/"+v2+") = "+(v1/v2));
+            console.log("or more simply, a.b / c.d = float");
+            break;
+        case "a":
+            console.log("the result of maioblist["+obn1+"]."+x1[1]+" + maioblist["+obn2+"]."+x2[1]+" ("+v1+"+"+v2+") = "+(v1+v2));
+            console.log("or more simply, a.b + c.d = int");
+            break;
+        case "s":
+            console.log("the result of maioblist["+obn1+"]."+x1[1]+" - maioblist["+obn2+"]."+x2[1]+" ("+v1+"-"+v2+") = "+(v1-v2));
+            console.log("or more simply, a.b - c.d = int");
+            break;
+    }
 }
 //end of scripts for Mai
 </script>
