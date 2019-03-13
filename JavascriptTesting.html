@@ -93,13 +93,27 @@
         <p id="maiout1"></p>
     </div>
     <div id="mai2" style="border:1px solid black;margin:20px;">
-        <button></button>
+        <button onclick="printints()">Print 100-500 but not 299</button>
+        <p id="maiout2" style="height:130px;overflow:scroll;scroll-snap-type:mandatory;scroll-behavior: smooth"></p>
     </div>
 </div>
 <!--************Start of scripts************************************************ -->
 <script>
 //Everything inside this script tag is for what Mai remembers from the test
 
+
+function printints() {
+    //this function should be fairly self explanatory
+    var o = document.getElementById("maiout2");
+    o.innerHTML = "";
+    for (var i = 100 ; i <501 ; i++) {
+        if (i == 299) {
+            o.insertAdjacentHTML("beforeend", "<br>This is where the number 299 would go but<br>it is cought by an if statement<br><br>");
+        }else {
+            o.insertAdjacentHTML("beforeend", "<p style='margin=2px'>"+i+"<br></p>");
+        }
+    }
+}
 
 //Object constructor -- usage is
 //var x = new testOb(y, z)
@@ -136,9 +150,9 @@ class testOb{
 function createObject() {
     //set up input values from user
     //newlines used inside quotes for readability
-    var x = document.getElementById("maiout1");
+    var o = document.getElementById("maiout1");
     //this .innerHTML function adds 3 input fields and a button to call the next function which will analyze them
-    x.innerHTML = "This function will create a specified number of objects with two random values each.<br>\
+    o.innerHTML = "This function will create a specified number of objects with two random values each.<br>\
     These random values will fall between the range set by the user below.<br>\
     Number of objects:<br>\
     <input id='maiin1' value='number of objects' onclick='this.value = \"\"'/><br>\
