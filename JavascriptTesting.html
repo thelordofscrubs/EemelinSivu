@@ -102,18 +102,61 @@ class testOb{
     constructor(a, b) {
         this.value1 = a;
         this.value2 = b;
+        //checking to make sure the values are in the right order
+        if (b-a < 0) {
+            var x = a;
+            a = b;
+            b = x;
+        }
+        //checking if the values are the same
+        if (a == b) {
+            this.valuer = a;
+        }
+        //creating random number between the two inputs
+        else {
+            this.valuer =
+                //Math.random returns a random number between 0 and 1
+                //this number is multiplied by the range, aka bigger input(b) minus smaller input(a)
+                //then this number between 0 and whatever the range is gets added to smaller input so the result is a random int from a to b
+                //Math.floor just rounds it down, we dont need a +1 because we are adding a
+                Math.floor(
+                    Math.random()*(b-a)+a
+                )
+            ;
+        }
     }
 }
+//function called by button already on the page
 function createObject() {
+    //set up input values from user
+    //newlines used inside quotes for readability
     var x = document.getElementById("maiout1");
-    x.innerHTML = "Number of objects:\
-    <input id='maiin1' value='number of objects'/><br>\
+    //this .innerHTML function adds 3 input fields and a button to call the next function which will analyze them
+    x.innerHTML = "This function will create a specified number of objects with two random values each.<br>\
+    These random values will fall between the range set by the user below.<br>\
+    Number of objects:<br>\
+    <input id='maiin1' value='number of objects' onclick='this.value = \"\"'/><br>\
     Range from :<br>\
-    <input id='maiin2' value='start of range'/><br>\
+    <input id='maiin2' value='start of range' onclick='this.value = \"\"'/><br>\
     To:<br>\
-    <br>\
+    <input id='maiin3' value='end of range'  onclick='this.value = \"\"'/><br>\
     <button onclick='createObject2();'>Submit</button>";
 }
+//function called by button submitting info
+function createObject2() {
+    //declaring list of objects
+    var maioblist = [];
+    //number of objects to make
+    var n = parseInt(document.getElementById("maiin1"));
+    //start of range for random values
+    var s = parseInt(document.getElementById("maiin2"));
+    //end of range
+    var e = parseInt(document.getElementById("maiin3"));
+    for (var i = 0 ; i < n ; i++) {
+        maioblist[i] = new testOb();
+    }
+}
+//end of scripts for Mai
 </script>
 <script>
 function loopdefvar () {
