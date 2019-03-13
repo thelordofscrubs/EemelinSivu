@@ -147,14 +147,24 @@ function createObject2() {
     //declaring list of objects
     var maioblist = [];
     //number of objects to make
-    var n = parseInt(document.getElementById("maiin1"));
+    var n = parseInt(document.getElementById("maiin1").value);
     //start of range for random values
-    var s = parseInt(document.getElementById("maiin2"));
+    var s = parseInt(document.getElementById("maiin2").value);
     //end of range
-    var e = parseInt(document.getElementById("maiin3"));
+    var e = parseInt(document.getElementById("maiin3").value);
+    //find output
+    var o = document.getElementById("maiout1");
     for (var i = 0 ; i < n ; i++) {
-        maioblist[i] = new testOb();
+        maioblist[i] = new testOb(s,e);
     }
+    //clear screen and display objects
+    o.innerHTML = "";
+    //side note: this entire for loop could be replace with o.innerHTML=JSON.stringify(maioblist); but I figured that could be confusing
+    for (var i = 0 ; i < n ; i++) {
+        o.insertAdjacentHTML("beforeend", "maioblist["+i+"] contains the object:<br>\
+        {value1:"+maioblist[i].value1+", value2:"+maioblist[i].value2+", valuer:"+maioblist[i].valuer+"}<br>");
+    }
+    o.insertAdjacentHTML("beforeend","where value1 and value2 are the inputted range, and valuer is the outputted random int<br>");
 }
 //end of scripts for Mai
 </script>
