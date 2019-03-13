@@ -101,10 +101,66 @@
         <p id="maiout3">This function creates an array with 100 random integers(1-10)
         and then finds the amount of times the first integer in the array appears in said array</p>
     </div>
+    <div id="mai4" style="border:1px solid black;margin:20px;">
+        <button onclick="findEndTime()">Find end of shift</button>
+        <p id="maiout4">This function Finds the end time of your shift</p>
+    </div>
 </div>
 <!--************Start of scripts************************************************ -->
 <script>
 //Everything inside this script tag is for what Mai remembers from the test
+
+function findEndTime() {
+    var o = document.getElementById("maiout4");
+    o.innerHTML = "Please input the starting time of your shift(0:00-23:59): <input id='maiin4' value='Starting Time' onclick='this.value=\"\"'/><br>\
+    Please input the length of your shift(0h1m-23h59m): <input id='maiin42' value='Shift Length' onclick='this.value=\"\"'/><br>\
+    <button onclick='findEndTime2();'>Submit</button>"
+}
+
+function findEndTime2() {
+    var o = document.getElementById("maiout4");
+    var startTimer = document.getElementById("maiin4").value;
+    var shiftLengthr = document.getElementById("maiin42").value;
+    //could use javascript built in date/time libraries but I wont for clarity
+    var sTa = startTimer.split(":");
+    //sTa is an array where the first value is the hour of the start time and the second is the minutes
+    sTa[0] = parseInt(sTa[0]);
+    sTa[1] = parseInt(sTa[1]);
+    //deal with negative values
+    //for (var i = 0 ; i < 2 ; i++) {
+    //    if (!sTa[i] < 0) {
+    //        sTa[i] *= (-1)
+    //    }
+    //}
+    var sLa = shiftLengthr.split("h");
+    //sLa is an array where the first value is the length of the shift in hours and the second is the leftover minutes
+    sLa[0] = parseInt(sLa[0]);
+    sLa[1] = parseInt(sLa[1].split(0,2));
+    //deal with negative values
+    //for (var i = 0 ; i < 2 ; i++) {
+    //    if (sLa[i] < 0) {
+    //        sLa[i] *= (-1)
+    //    }
+    //}
+    var endTime = [];
+    //initialize an array which will have the end time in hours as a value, and minutes as a seperate value
+    endTime[0] = sTa[0] + sLa[0];
+    endTime[1] = sTa[1] + sLa[1];
+    //console.log(endTime);
+    //while loops to reduce the numbers to within acceptable values.
+    while (endTime[1] >= 60) {
+        endTime[1] -= 60;
+        endTime[0]++;
+    }
+    while (endTime[0] >= 24) {
+        endTime[0] -= 24;
+    }
+    if (endTime[1].toString().length == 1) {
+        endTime[1] = "0" + endTime[1].toString();
+    }
+    o.insertAdjacentHTML("beforeend", "The end of your shift is at "+endTime[0]+":"+endTime[1]+" o'clock");
+}
+
 var ar = [];
 //declaring as a global so it can be accessed elsewhere
 function findOcc() {
