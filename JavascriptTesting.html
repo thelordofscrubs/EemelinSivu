@@ -81,10 +81,21 @@
     <button onclick="sortValue2();">Sort Objects by their second value</button>
     <button onclick="sortValue22();">Sort Objects by their second value</button>
 </div>
-
+<div id="loop define variable">
+<button id="loop def" onclick="loopdefvar();">variable defined inside loop</button>
+</div>
 
 <!--************Start of scripts************************************************ -->
+<script>
 
+function loopdefvar () {
+    var x = document.getElementById("loop define variable");
+    for (var i = 0; i < 6; i++) {
+        x.insertAdjacentHTML("beforeend", i);
+    }
+    x.insertAdjacentHTML("beforeend", i);
+}
+</script>
 <script>
     var objectList = [];
     function displayObjects() {
