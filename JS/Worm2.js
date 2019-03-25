@@ -214,7 +214,7 @@ function sendScore(score) {
         }
     }
     var hscorejson = JSON.stringify(score);
-    xr.open("GET", "/PHP/Worm2.php?q="+hscorejson+"&w="+hc,true)
+    xr.open("GET", "/PHP/Worm2.php?q="+hscorejson+"&w="+hc,true);
     xr.send();
 }
 

@@ -11,7 +11,23 @@
 
 #input {
     margin-top:10px;
-    width: 80%;
-    height: 71px;
+    width:80%;
+    margin-right:auto;
+    margin-left:auto;
+}
 
+#commentName {
+    display:block;
+}
+
+#commentin {
+    height:50px;
+    flex-grow: 5;
+}
+
+#commentflex {
+    margin-top:10px;
+    display:flex;
+    justify-content: center;
+    width:100%;
 }
