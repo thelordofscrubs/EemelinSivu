@@ -103,7 +103,8 @@
     </div>
     <div id="mai4" style="border:1px solid black;margin:20px;">
         <button onclick="findEndTime()">Find end of shift</button>
-        <p id="maiout4">This function Finds the end time of your shift</p>
+        <p id="maiout41">This function Finds the end time of your shift</p>
+        <p id="maiout4"></p>
     </div>
     <div id="mai5" style="border:1px solid black;margin:20px;">
         <button onclick="findDrop()">Find temperature drop</button>
@@ -133,7 +134,7 @@ function findDrop() {
 }
 
 function findEndTime() {
-    var o = document.getElementById("maiout4");
+    var o = document.getElementById("maiout41");
     o.innerHTML = "Please input the starting time of your shift(0:00-23:59): <input id='maiin4' value='Starting Time' onclick='this.value=\"\"'/><br>\
     Please input the length of your shift(0h1m-23h59m): <input id='maiin42' value='Shift Length' onclick='this.value=\"\"'/><br>\
     <button onclick='findEndTime2();'>Submit</button>";
@@ -181,7 +182,7 @@ function findEndTime2() {
     if (endTime[1].toString().length == 1) {
         endTime[1] = "0" + endTime[1].toString();
     }
-    o.insertAdjacentHTML("beforeend", "The end of your shift is at "+endTime[0]+":"+endTime[1]+" o'clock");
+    o.innerHTML = "The end of your shift is at "+endTime[0]+":"+endTime[1]+" o'clock";
 }
 
 var ar = [];
@@ -323,7 +324,7 @@ function createObject3() {
         }
         var obpos = x.indexOf("},{");
         y[i] = x.slice(0,obpos+1);
-        x = x.slice(obps+2);
+        x = x.slice(obpos+2);
         i++; 
     }
     //var y = x.split(",");
