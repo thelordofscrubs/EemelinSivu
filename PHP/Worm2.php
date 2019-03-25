@@ -106,9 +106,10 @@ function sortScores() {
     for($i = 0;$i < count($scores); $i++) {
         echo "hs is ".$hs."
         scores hs is ".$scores[$i]->hs."
-        i is ".$i;
+        i is ".$i."
+        ";
         if ($hs > $scores[$i]->hs) {
-            echo "hs is bigger than scoresihs
+            echo "hs is bigger than scores[".$i."]->hs
             ";
             $spot = $i;
             break;
