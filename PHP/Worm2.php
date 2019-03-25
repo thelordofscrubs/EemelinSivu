@@ -88,12 +88,21 @@ function pushScore() {
     $xmldom->documentElement->insertBefore($newscoredom, $xmldom->getElementsByTagName("scorev")[$loc]);
     
     echo "scores array length is " . count($scores);
-    if (count($scores) == 5) {
+    if (count($scores) == 6) {
         $xmldom->getElementsByTagName("scorev")[5]->parentNode->removeChild($xmldom->getElementsByTagName("scorev")[5]);
     }
     echo $xmldom->saveXML();
     #$xmldom->formatOutput = true;
-    $xmldom->save("..\XML\Worm2.xml");
+    if ($xmldom->save("\XML\Worm2.xml")) {
+        $xmldom->save("\XML\Worm2.xml");
+        echo "saved xml";
+    } elseif ($xmldom->save("..\XML\Worm2.xml");) {
+        $xmldom->save("..\XML\Worm2.xml");
+        echo "saved xml";
+    } else {
+        echo "failed to save xml";
+    }
+    
     #echo "php ran through";
 }
 
