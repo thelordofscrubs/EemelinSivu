@@ -5,7 +5,7 @@ var segmentdir = [4];
 var hitWall = false;
 var food = {x:3, y:3};
 var gameTimer;
-var sideLength = 5;
+var sideLength = 6;
 var gameSpeed = 700;
 var cust = false;
 var gridExist = false;
