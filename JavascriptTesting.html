@@ -7,7 +7,7 @@
     <script src="JS/Navbar.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
-<body>
+<body onload="getcookie()" onbeforeunload="setcookie()">
 <div class="navbar" id="navbar">
 </div>
 
@@ -111,7 +111,135 @@
         <p id="maiout5">This function generates 30 random integers from -10 to 10 and finds the biggest "drop" in the array</p>
     </div>
 </div>
+<div id="meisearch" style="border: 1px solid black;margin-top:20px;">
+    <div>
+        <input id="meiSearchInput"/>
+        <button onclick="meiSearchFun()">Search</button>
+        <p id="meiSearchOut"></p>
+    </div>
+    <div>
+        <button onclick="meiSearchCA()">Create Array</button>
+        <p id="meiSearchCAP"></p>
+    </div>
+</div>
+
+
+<div id="bottom space" style="margin:30px;"></div>
 <!--************Start of scripts************************************************ -->
+<script>
+//Meis simple search
+var jobArray = []
+function meiSearchFun() {
+    var x = document.getElementById("meiSearchInput");
+    var searchTerms = x.value.split(" ");
+    var cmpscore = []; //holds indexis and scores of jobArray in order of relevancy
+    for (var i = 0; i < jobArray.length; i++) {
+        var cmpiter = 0;
+        var keyWords = jobArray[i].name.split(" ");
+        console.log("checking" + jobArray[i]);
+        console.log(jobArray[i]);
+        for (var f = 0; f < searchTerms.length; f++) {
+            console.log("search term " + searchTerms[f]);
+            for (var w = 0; w <keyWords.length;w++ ) {
+                console.log("against keyWord " + keyWords[w]);
+                if (searchTerms[f] == keyWords[w]) {
+                    console.log("searchterm " + searchTerms[f] +" matched against keyword " + keyWords[w])
+                    cmpiter++;
+                    console.log("cmpiter is now "+cmpiter);
+                }
+            }
+        }
+        cmpscore[i] = new searchRes(cmpiter, i);
+        console.log("cmpscore" + i + " is "+ cmpscore[i]);
+        console.log(cmpscore[i]);
+    }
+    x = document.getElementById("meiSearchOut");
+    var to = "";
+    cmpscore.sort(function (a,b) {return b.score - a.score});
+    for (var i = 0; i < cmpscore.length; i++) {
+        console.log("the result "+ jobArray[cmpscore[i].jobIndex].name + " has position "+(i+1)+" with score "+ cmpscore[i].score);
+        if(cmpscore[i].score) {
+            to = to.concat(jobArray[cmpscore[i].jobIndex].url + "<br>");
+        }
+    }
+    x.innerHTML = to;
+}
+//window.addEventListener("unload", setcookie);
+
+function searchRes(score, index) {
+        this.score = score;
+        this.jobIndex = index;
+}
+
+function meiSearchCA() {
+    var x = document.getElementById("meiSearchCAP");
+    x.innerHTML = "\
+        How many url objects would you like to create?\
+        <input id='mSI2'/>\
+        <button onclick='meiSearchCA2()'>Submit</button>\
+        \
+    ";
+}
+
+function meiSearchCA2() {
+    var x = document.getElementById("mSI2");
+    var y = document.getElementById("meiSearchCAP");
+    var z = "";
+    for (var i = 0; i< parseInt(x.value); i++) {
+        z = z.concat("\
+            <input id = 'mSCAU"+i+"', class='meiSearchCA', value = 'URL of object "+(i+1)+"'/>\
+            <input id='mSCAN"+i+"' value='Name of object "+(i+1)+"'/>\
+        ");
+    }
+    z = z.concat("<button onclick='meiSearchCA3()'>Submit</button>");
+    y.innerHTML = z;
+}
+
+function meiSearchCA3() {
+    var al = jobArray.length;
+    var ci = "";
+    for (var i = 0;i < document.getElementsByClassName("meiSearchCA").length;i++) {
+        var x = document.getElementById("mSCAU"+i);
+        var y = document.getElementById("mSCAN"+i);
+        jobArray[i+al] = new urlOb(y.value, x.value);
+        ci = ci.concat(JSON.stringify(jobArray[i+al])+"<br>");
+    }
+    document.getElementById("meiSearchCAP").innerHTML = "The Objects you added are<br>"+ci;
+}
+
+function urlOb(name, url) {
+    this.name = name;
+    this.url = url;
+}
+
+function setcookie() {
+    var d = new Date();
+    d.setTime(d.getTime() + (360*24*60*60*1000));
+    console.log(d)
+    document.cookie = "jsonJobArray="+JSON.stringify(jobArray)+";expires="+d;
+    console.log(document.cookie);
+    return "";
+}
+
+function getcookie() {
+    var x = document.cookie;
+    var cr = decodeURIComponent(x);
+    var cs = cr.split(";");
+    console.log(cs)
+    for (var i = 0 ; i < cs.length ; i++) {
+        if (!cs[i].indexOf("jsonJobArray=")) {
+            var jsoncookie = cs[i].slice(13);
+        }
+    }
+    //var jsoncookie = cs[0].slice(12);
+    console.log(jsoncookie)
+    if (jsoncookie) {
+        jobArray = JSON.parse(jsoncookie);
+    }
+}
+
+</script>
+
 <script>
 //Everything inside this script tag is for what Mai remembers from the test
 
