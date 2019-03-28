@@ -91,7 +91,7 @@ function pushScore() {
     if (count($scores) == 6) {
         $xmldom->getElementsByTagName("scorev")[5]->parentNode->removeChild($xmldom->getElementsByTagName("scorev")[5]);
     }
-    echo $xmldom->saveXML();
+    echo "\n".$xmldom->saveXML()."\n";
     #$xmldom->formatOutput = true;
     if ($xmldom->save("\XML\Worm2.xml")) {
         $xmldom->save("\XML\Worm2.xml");
