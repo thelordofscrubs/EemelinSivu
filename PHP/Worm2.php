@@ -94,7 +94,7 @@ function pushScore() {
     
     echo "scores array length is " . count($scores);
     if (count($scores) == 5) {
-        $xmldom->getElementsByTagName("scorev")[$xmldom->getElementsByTagName("scorev")->length]->parentNode->removeChild($xmldom->getElementsByTagName("scorev")[$xmldom->getElementsByTagName("scorev")->length]));
+        $xmldom->getElementsByTagName("scorev")[$xmldom->getElementsByTagName("scorev")->length]->parentNode->removeChild($xmldom->getElementsByTagName("scorev")[$xmldom->getElementsByTagName("scorev")->length]);
     }
     echo "\n".$xmldom->saveXML()."\n";
     #$xmldom->formatOutput = true;
