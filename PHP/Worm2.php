@@ -96,11 +96,12 @@ function pushScore() {
     }
     echo "\n".$xmldom->saveXML()."\n";
     #$xmldom->formatOutput = true;
-    if (echo $xmldom->save("/XML/Worm3.xml")) {
+    if ($r = $xmldom->save("/XML/Worm2.xml")) {
         echo "saved xml /xml";
-        #echo $xmldom->save("/XML/Worm3.xml");
-    } elseif (echo $xmldom->save("../XML/Worm3.xml")) {
+        echo $r;
+    } elseif ($r = $xmldom->save("../XML/Worm2.xml")) {
         echo "saved xml with ..";
+        echo $r;
     } else {
         echo "failed to save xml";
     }
