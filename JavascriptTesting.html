@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <title>Eemelin Javascriptit</title>
     <link rel="stylesheet", type="text/css", href="CSS/main.css"/>
+    <link rel="stylesheet", type="text/css", href="CSS/JavascriptTesting.css"/>
     <script src="JS/Navbar.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
@@ -11,7 +12,7 @@
 <div class="navbar" id="navbar">
 </div>
 
-<div style="margin-top:100 px; top: 50px;border: 1px solid black;">
+<div class = "testingDiv" style="margin-top:70px;">
     <p id="pause" style="margin-top:50px">
         Something
     </p>
@@ -20,7 +21,7 @@
     </button>
 </div>
 
-<div style="border: 1px solid black;margin-top:20px;">
+<div  class = "testingDiv">
     <button onclick="removeChildtest();">
         array removeChild
     </button>
@@ -30,7 +31,7 @@
     <div><p class="someStuff">this is a p element</p></div>
     <p id="removechildinfo">the number of elements in the array is 4</p>
 </div>
-<div style="border: 1px solid black;margin-top:20px;">
+<div class = "testingDiv" >
     <canvas width="100" height="100" id="testCanvas">  </canvas>
     <script>
         var x = document.getElementById("testCanvas");
@@ -44,7 +45,7 @@
     </script>
 </div>
 
-<div id="elementTesting" style="border: 1px solid black;margin-top:20px;">
+<div class = "testingDiv"  id="elementTesting" >
     <div>
 
     </div>
@@ -64,13 +65,13 @@
     </div>
     <button onclick="elementarray()">click here</button>
 </div>
-<div style="border: 1px solid black;margin-top:20px;">
+<div class = "testingDiv">
     <p id ="Okku">
         <button onclick="printDescending()">Print Descending</button>
     
     </p>
 </div>
-<div style="border: 1px solid black;margin-top:20px;">
+<div class = "testingDiv"  >
     <p id="objectp">
 
     </p>
@@ -81,12 +82,12 @@
     <button onclick="sortValue2();">Sort Objects by their second value</button>
     <button onclick="sortValue22();">Sort Objects by their second value</button>
 </div>
-<div id="loop define variable" style="margin-top:20px; border: 1px solid black;">
+<div class = "testingDiv"  id="loop define variable">
 <button id="loop def" onclick="loopdefvar();">variable defined inside loop</button>
 <p id="ldfout"></p>
 </div>
 <!--this bit is the examples from what Mai remembers-->
-<div id="mai" style="margin-top:20px; border: 1px solid black;">
+<div class = "testingDiv"  id="mai">
     <h3>Start of scripts for Mai</h3>
     <div id="mai1" style="border:1px solid black;margin:20px;">
         <button onclick="createObject()">Objecttest</button>
@@ -111,7 +112,7 @@
         <p id="maiout5">This function generates 30 random integers from -10 to 10 and finds the biggest "drop" in the array</p>
     </div>
 </div>
-<div id="meisearch" style="border: 1px solid black;margin-top:20px;">
+<div class = "testingDiv"  id="meisearch" >
     <div>
         <input id="meiSearchInput"/>
         <button onclick="meiSearchFun()">Search</button>
