@@ -1,7 +1,7 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors',1);
+#ini_set('display_errors', 1);
+#ini_set('display_startup_errors',1);
 
 define('WEBROOT', $_SERVER['DOCUMENT_ROOT']);
 
@@ -28,7 +28,7 @@ for ($i = 0; $i < $xmldom->getElementsByTagName("name")->length; $i++ ) {
 
 if (count($scores) < 5) {
     pushScore();
-    exit;
+    exit("less than 5 scores");
 }
 
 if ($hs <= $scores[count($scores)-1]->hs) {
@@ -93,8 +93,8 @@ function pushScore() {
     $xmldom->documentElement->insertBefore($newscoredom, $xmldom->getElementsByTagName("scorev")[$loc]);
     
     echo "scores array length is " . count($scores);
-    if (count($scores) == 6) {
-        $xmldom->getElementsByTagName("scorev")[5]->parentNode->removeChild($xmldom->getElementsByTagName("scorev")[5]);
+    if (count($scores) == 5) {
+        $xmldom->getElementsByTagName("scorev")[count($xmldom->getElementsByTagName("scorev"))]->parentNode->removeChild($xmldom->getElementsByTagName("scorev")count($xmldom->getElementsByTagName("scorev")));
     }
     echo "\n".$xmldom->saveXML()."\n";
     #$xmldom->formatOutput = true;
