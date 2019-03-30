@@ -3,6 +3,8 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors',1);
 
+define('WEBROOT', $_SERVER['DOCUMENT_ROOT']);
+
 $newscore = json_decode($_REQUEST["q"], false);
 $hc = $_REQUEST["w"];
 $scores = array();
@@ -96,7 +98,7 @@ function pushScore() {
     }
     echo "\n".$xmldom->saveXML()."\n";
     #$xmldom->formatOutput = true;
-    if ($r = $xmldom->save("/XML/Worm2.xml")) {
+    if ($r = $xmldom->save(WEBROOT."/XML/Worm2.xml")) {
         echo "saved xml /xml";
         echo $r;
     } elseif ($r = $xmldom->save("../XML/Worm2.xml")) {
