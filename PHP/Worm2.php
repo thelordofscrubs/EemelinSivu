@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors',1);
+
 $newscore = json_decode($_REQUEST["q"], false);
 $hc = $_REQUEST["w"];
 $scores = array();
