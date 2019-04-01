@@ -1,0 +1,43 @@
+nav {
+
+}
+
+html {
+    display:flex;
+    justify-content: center;
+    flex-grow:1;
+}
+
+
+
+#navButton {
+    width:50px;
+    height:50px;
+    top:0px;
+    left:0px;
+    background: yellow;
+    background-image:url("/pictures/navbar.jpg");
+}
+
+header {
+    background-image: url("/pictures/codingStock.jpg");
+    width:100%;
+    height:15rem;
+    background-position: center;
+    background-position-y: 63%;
+    flex-grow:1;
+    justify-content: center;
+}
+
+header>h2 {
+    color:white;
+    margin:auto;
+    width:50%;
+    top:30%;
+    
+    
+}
+
+body {
+    width:100%;
+}
