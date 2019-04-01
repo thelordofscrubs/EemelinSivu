@@ -251,7 +251,7 @@ function findDrop() {
     for (var i = 0 ; i < 30 ; i++) {
         ta[i] = Math.floor(Math.random()*21 - 10);
     }
-    o.innerHTML = "<br>The array of temperatures contains the following values: "+ta+"<br>";
+    o.innerHTML = "<br>The array of temperatures contains the following values:<br> "+ta+"<br>";
     for (var i = 0 ; i < 29 ; i++) {
         var tDrop = ta[i] - ta[i+1];
         if (tDrop > bd.drop) {
