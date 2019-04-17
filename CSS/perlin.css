@@ -1,3 +1,30 @@
 body {
     background-color: black;
 }
+
+#menuButton {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: gray;
+}
+
+#canvasDiv {
+    width: 500px;
+    height: 500px;
+    border: 1px solid white;
+    position: relative;
+    top: 50px;
+    left: 30%;
+}
+
+#sliders {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    height: 500px;
+    width: 200px;
+    border: 1px solid white;
+}

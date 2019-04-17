@@ -10,6 +10,7 @@ var scores = [];
 var hscores = [];
 var hscoresP;
 var hc = 2;
+
 console.log(windowSize);
 console.log(document.cookie);
 window.addEventListener("keydown", direction);
@@ -19,7 +20,7 @@ window.addEventListener("beforeunload",saveCookies);
 
 function gameLoop() {
     console.log("start of game loop");
-    Eat();
+    eat();
     for (var i = wormSegments.length; i >= 0 ; i--) {
         wormSegments[i].updatePos();
         wormSegments[i].draw();
@@ -55,18 +56,51 @@ if (wormSegments.length >= (sideLength*sideLength)){
     }
     writeScore(wormSegments.length);
     startGame();
+    }
 }
 
+
+//Run at start
+function startGame(){
+    if (gridExist == false) {generateCSS();generateGrid();}
+    wormSegments = [new wormSegment([1,1],2, 0)];
+    hitWall = false;
+    generateFood();
+    wormSegments[0].draw();
 }
 
-
+//arrowkey detector
+function direction (e) {
+    var x = e.keyCode;
+    switch(x) {
+        case 37: if(wormSegments[0].direction !== 4){
+            console.log("left");
+            Worm.dir = 2;
+            }break;
+            
+        case 38: if(wormSegments[0].direction !== 3){
+            console.log("up");
+            Worm.dir = 1;
+            }break;
+            
+        case 39: if(wormSegments[0].direction !== 2){
+            console.log("right");
+            Worm.dir = 4;
+            }break;
+            
+        case 40: if(wormSegments[0].direction !== 1){
+            console.log("down");
+            Worm.dir = 3;
+            }
+    }
+}
 //*********************************END OF TOP LEVEL FUNCTIONS*******************************
 
 function wormSegment(pos, dir, wsi) {
     this.xyCord = pos;
     this.direction = dir;
     this.segmentIndex = wsi;
-    function draw() {
+    this.draw = function () {
         xy = this.xyCord;
         dir = this.direction;
         if (this.segmentIndex == wormSegments.length-1) {
@@ -74,9 +108,134 @@ function wormSegment(pos, dir, wsi) {
         } else {
             isLast = false;
         }
-
+        var p = Math.PI;
+        var u = Math.ceil(windowSize/sideLength);
+        var r = 0.45*u;
+        var wormCell = document.getElementsByClassName("wormCell");
+        console.log("Canvas elements to be deleted: "+wormCell.length);
+        while (wormCell.length > 0){
+            wormCell[0].parentNode.removeChild(wormCell[0]);
+        }
+        console.log("cell"+wormSegments[0].xyCord[0]+wormSegments[0].xyCord[1]);
+        for (var i = 0; i < wormSegments.length;i++ ){
+            if (document.getElementById("cell"+segmentX[i]+","+segmentY[i]) !== null) 
+            {
+                console.log("Draw started");
+                document.getElementById("cell"+segmentX[i]+","+segmentY[i]).insertAdjacentHTML("beforeend", "\
+                <canvas class='wormCell' id='wormSeg"/*EK*/+i+"' width='"+u+"' height='"+u+"' style='position:absolute'></canvas>\
+                ");
+                var wormCanvas = document.getElementById("wormSeg"+i);
+                var context = wormCanvas.getContext("2d");
+    
+    
+                context.fillStyle = "black";
+                if (i == 0 && wormSegments.length > 1) {
+                    switch (wormSegments[0].direction) {
+                        case (1):
+                        //bottom
+                            context.moveTo(.5*u,u);
+                            context.arc(0.5*u,u,r,p,p*2);
+                            
+                            context.fill();
+                        break;
+                        case (2):
+                        //right
+                        context.moveTo(u,.5*u);
+                            context.arc(u,0.5*u,r,0.5*p,1.5*p);
+                            
+                            context.fill();
+                        break;
+                        case (3):
+                        //top
+                        context.moveTo(.5*u,0);
+                            context.arc(0.5*u,0,r,0,p);
+                            
+                            context.fill();
+                        break;
+                        case (4):
+                        //left
+                        context.moveTo(0,.5*u);
+                            context.arc(0,0.5*u,r,1.5*p,0.5*p);
+                            
+                            context.fill();
+                    }
+                }else if(i!==0){
+                    if(i < wormSegments.length-1) {
+                    switch (wormSegments[i].direction) {
+                        case (1):
+                        context.moveTo(.5*u,u);
+                            context.arc(0.5*u,u,r,p,p*2);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                        break;
+                        case (2):
+                        context.moveTo(u,.5*u);
+                            context.arc(u,0.5*u,r,0.5*p,1.5*p);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                        break;
+                        case (3):
+                        context.moveTo(.5*u,0);
+                            context.arc(0.5*u,0,r,0,p);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                        break;
+                        case (4):
+                        context.moveTo(0,.5*u);
+                            context.arc(0,0.5*u,r,1.5*p,0.5*p);
+                            context.fillStyle = "black";
+                            context.fill();
+                    }
+                    }
+                    switch (wormSegments[i-1].direction) {
+                        case (1):
+                        context.moveTo(.5*u,0);
+                            context.arc(0.5*u,0,r,0,p);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                        break;
+                        case (2):
+                        context.moveTo(0,.5*u);
+                            context.arc(0,0.5*u,r,1.5*p,0.5*p);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                        break;
+                        case (3):
+                        context.moveTo(.5*u,u);
+                            context.arc(0.5*u,u,r,p,p*2);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                        break;
+                        case (4):
+                        context.moveTo(u,.5*u);
+                            context.arc(u,0.5*u,r,0.5*p,1.5*p);
+                            context.fillStyle = "black";
+                            context.fill();
+    
+                    }
+                    
+                }
+                context.closePath();
+                context.beginPath();
+                context.arc(0.5*u,0.5*u,0.45*u,0,p*2);
+                if (i == 0) {
+                    context.fillStyle = "#777777";
+                    context.fill();
+                } else {
+                    context.fillStyle = "black";
+                    context.fill();
+                }
+            }
+        }
     }
-    function updatePos() {
+    
+    this.updatePos = function () {
         if (this.segmentIndex == 0) {
             xy0 = this.xyCord;
             switch (this.direction) {
@@ -100,6 +259,17 @@ function wormSegment(pos, dir, wsi) {
             hitWall = true;
         }
     }
+}
+
+function eat() {
+    if (food.x == wormSegments[0].xyCord[0] && food.y == wormSegments[0].xyCord[1]) {
+        
+    }
+
+}
+
+function startLoop() {
+    gameTimer = setInterval(gameLoop, gameSpeed);
 }
 
 function saveCookies() {
