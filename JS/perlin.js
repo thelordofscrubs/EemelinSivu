@@ -4,7 +4,7 @@ function createNoise(alength) {
     let noise = [];
     //starting point is half
     noise[0] = .5;
-    for (let i = 0; i < alength/2; i++) {
+    for (let i = 0; i < alength/10; i++) {
         let chg = Math.random()*.1
         //if (Math.random() < noise[i]) {
         //    chg *= (-1);
@@ -13,18 +13,22 @@ function createNoise(alength) {
             chg *= (-1);
         }
         //if the number is high, then higher probability for it to go down, same for low but opposite
-        if (chg < 0 && noise[i*2] < .2) {
+        if (chg < 0 && noise[i*10] < .2) {
             if (Math.random() > noise[i]) {
                 chg *= (-1);
             }
         }
-        if (chg > 0 && noise[i*2] > .8) {
+        if (chg > 0 && noise[i*10] > .8) {
             if (Math.random() < noise[i]) {
                 chg *= (-1);
             }
         }
-        noise[i*2+2] = noise[i*2] + chg;
-        noise[i*2+1] = noise[i*2]/2 + noise[i*2+2]/2;
+        noise[i*10+10] = noise[i*10] + chg;
+        for (let f = 0;f < 9; f++) {
+            noise[i*10+f+1] = noise[i*10]*((10-f+1)/10)+noise[i*10+10]*((f+1)/10);
+        }
+        //noise[i*2+2] = noise[i*2] + chg;
+        //noise[i*2+1] = noise[i*2]/2 + noise[i*2+2]/2;
         
     }
     //for(let i = 0; i < noise.length; i++) {
