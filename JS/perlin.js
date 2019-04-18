@@ -1,10 +1,11 @@
 noiseLength = 10000;
 
-function createNoise() {
+function createNoise(alength) {
     let noise = [];
+    //starting point is half
     noise[0] = .5;
-    for (let i = 0; i < noiseLength; i++) {
-        let chg = Math.random()*.01
+    for (let i = 0; i < alength; i++) {
+        let chg = Math.random()*.04
         //if (Math.random() < noise[i]) {
         //    chg *= (-1);
         //}
@@ -30,7 +31,58 @@ function createNoise() {
     return noise;
 }
 
-var noiseArray = createNoise();
+function twoDNoise(dimL) {
+    let yArray = [createNoise(dimL)];
+    let t = createNoise(dimL);
+    for (let i = 1; i < dimL ; i++) {
+        yArray[i] = [];
+        yArray[i][0] = t[i];
+        for (let f = 1; f < dimL; f++) {
+            let OG = (yArray[i][f-1]+yArray[i-1][f])/2;
+            let chg = Math.random()*.01
+            if (Math.random()<.5) { 
+                chg *= (-1);
+                if (OG < .1 && Math.random() > OG) {
+                    chg *= (-1);
+                }
+            } else if (OG > .98 && Math.random() < OG) {
+                chg *= (-1);
+            }
+            
+            yArray[i][f] = OG + chg;
+        }
+    }
+    return yArray;
+}
+
+function displayTwoDNoise() {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    x = document.getElementById("canvasElement");
+    let ctx = x.getContext("2d");
+    ctx.strokeStyle = "#FFFFFF";
+    
+    let noiseToDisplay = twoDNoise(500);
+    for (let i = 0; i < 500; i++) {
+        for (let f = 0; f < 500; f++) {
+            let colorString = "#";
+            colorString1 = colorString.concat(Math.round(noiseToDisplay[i][f]*100).toString(16));
+            colorString = colorString1.concat(Math.round(noiseToDisplay[i][f]*100).toString(16));
+            colorString1 = colorString.concat(Math.round(noiseToDisplay[i][f]*100).toString(16));
+            ctx.fillStyle = colorString1;
+            ctx.fillRect(i,f,1,1);            
+        }
+    }
+}
+
+
+var noiseArray = createNoise(noiseLength);
+
+function newNoise() {
+    noiseArray = createNoise(noiseLength);
+}
 
 function displayNoise(xCord) {
     let x = document.getElementById("canvasDiv");
