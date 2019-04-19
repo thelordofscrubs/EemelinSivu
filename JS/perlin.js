@@ -4,8 +4,8 @@ function createNoise(alength) {
     let noise = [];
     //starting point is half
     noise[0] = .5;
-    for (let i = 0; i < alength/10; i++) {
-        let chg = Math.random()*.1
+    for (let i = 0; i < alength/2; i++) {
+        let chg = Math.random()*.2
         //if (Math.random() < noise[i]) {
         //    chg *= (-1);
         //}
@@ -13,20 +13,18 @@ function createNoise(alength) {
             chg *= (-1);
         }
         //if the number is high, then higher probability for it to go down, same for low but opposite
-        if (chg < 0 && noise[i*10] < .2) {
+        if (chg < 0 && noise[i*2] < .25) {
             if (Math.random() > noise[i]) {
                 chg *= (-1);
             }
         }
-        if (chg > 0 && noise[i*10] > .8) {
+        if (chg > 0 && noise[i*2] > .75) {
             if (Math.random() < noise[i]) {
                 chg *= (-1);
             }
         }
-        noise[i*10+10] = noise[i*10] + chg;
-        for (let f = 0;f < 9; f++) {
-            noise[i*10+f+1] = noise[i*10]*((10-f+1)/10)+noise[i*10+10]*((f+1)/10);
-        }
+        noise[i*2+2] = noise[i*2] + chg;
+        noise[i*2+1] = (noise[i*2] + noise[i*2+2])/2
         //noise[i*2+2] = noise[i*2] + chg;
         //noise[i*2+1] = noise[i*2]/2 + noise[i*2+2]/2;
         
@@ -37,19 +35,76 @@ function createNoise(alength) {
     return noise;
 }
 
-function twoDNoise(dimL) {
-    let yArray = [createNoise(dimL)];
+function twoDNoise(dimL,blur) {
+    let t1 = createNoise(dimL);
     let t = createNoise(dimL);
+    if (blur) {
+        for (let i = 0; i < blur; i++) {
+            t1 = blurOneD(t1);
+            t = blurOneD(t); 
+        }
+    }
+    let yArray = [t1]
     for (let i = 1; i < dimL ; i++) {
         yArray[i] = [];
         yArray[i][0] = t[i];
         for (let f = 1; f < dimL; f++) {
-            
             yArray[i][f] = yArray[i][0]/2+yArray[0][f]/2;
+            let chg = Math.random() * 0.1;
+            if (Math.random() < .5) {
+                chg *= (-1);
+            }
+            if (chg < 0 && yArray[i][f] < .05) {
+                if (Math.random() > yArray[i][f]) {
+                    chg *=(-1);
+                }
+            } else if (chg > 0 && yArray[i][f] > .95) {
+                if (Math.random() < yArray[i][f]) {
+                    chg *= (-1);
+                }
+            }
+            yArray[i][f] += chg;
             //yArray[i][f] -= (Math.min(.1,yArray[i][f]))
         }
     }
     return yArray;
+}
+
+function blurOneD(array) {
+    let newArray = [array[0]];
+    newArray[array.length-1] = array[array.length-1];
+    for (let i = 1;i < array.length-1;i++) {
+        let avg = array[i-1] + array[i] + array[i+1];
+        newArray[i] = avg/3
+    }
+    return newArray;
+}
+
+function blurTwoD(array) {
+    let newArray = [array[0]]
+    for (let i = 1; i < array.length; i++) {
+        newArray[i] = [];
+        newArray[i][0] = array[i][0];
+    }
+    for (let i = 1; i < array.length-1; i++) {
+        for (let f = 1; f < array[0].length-1; f++) {
+            //let row1 = array[i-1][f-1] + array[i-1][f] + array[i-1][f+1];
+            //let row2 = array[i][f-1] + array[i][f] + array[i][f+1];
+            //let row3 = array[i+1][f-1] + array[i+1][f] + array[i+1][f+1];
+            //let avg = (row1 + row2 + row3)/9;
+            let avg = 0;
+            for (let p = -1;p < 2;p++) {
+                for (let o = -1;o < 2;o++) {
+                    if (array[i+p][f+o]) {
+                        avg += array[i+p][f+o];
+                    }
+                }
+            }
+            avg /= 9;   
+            newArray[i][f] = avg;
+        }
+    }
+    return newArray;
 }
 
 function noiseObject(NV, n) {
@@ -95,6 +150,8 @@ function twoDNoise2(dimL) {
     return oArray;
 }
 
+
+
 /*
 function threeDNoise(dim) {
     let zArray = [twoDNoise(dim)];
@@ -108,7 +165,7 @@ function threeDNoise(dim) {
 }
 */
 
-function displayTwoDNoise() {
+function displayTwoDNoise(blur,blur1) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -117,7 +174,11 @@ function displayTwoDNoise() {
     let ctx = x.getContext("2d");
     ctx.strokeStyle = "#FFFFFF";
     
-    let noiseToDisplay = twoDNoise(500);
+    //let noise = twoDNoise(500);
+    let noiseToDisplay = twoDNoise(500,blur1)
+    for (let i = 0; i < blur; i++) {
+        noiseToDisplay = blurTwoD(noiseToDisplay);
+    }
     for (let i = 0; i < 500; i++) {
         for (let f = 0; f < 500; f++) {
             let colorString = "#";
