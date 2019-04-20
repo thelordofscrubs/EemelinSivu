@@ -1,11 +1,14 @@
 noiseLength = 10000;
 
-function createNoise(alength) {
+function createNoise(alength, variance) {
     let noise = [];
+    if (!variance) {
+        variance = .15
+    }
     //starting point is half
     noise[0] = .5;
     for (let i = 0; i < alength/2; i++) {
-        let chg = Math.random()*.2
+        let chg = Math.random()*variance
         //if (Math.random() < noise[i]) {
         //    chg *= (-1);
         //}
@@ -35,9 +38,12 @@ function createNoise(alength) {
     return noise;
 }
 
-function twoDNoise(dimL,blur) {
-    let t1 = createNoise(dimL);
-    let t = createNoise(dimL);
+function twoDNoise(dimX,dimY,blur,onedvar) {
+    if (!onedvar) {
+        onedvar = .15;
+    }
+    let t1 = createNoise(dimX,onedvar);
+    let t = createNoise(dimY,onedvar);
     if (blur) {
         for (let i = 0; i < blur; i++) {
             t1 = blurOneD(t1);
@@ -45,12 +51,12 @@ function twoDNoise(dimL,blur) {
         }
     }
     let yArray = [t1]
-    for (let i = 1; i < dimL ; i++) {
+    for (let i = 1; i < dimY ; i++) {
         yArray[i] = [];
         yArray[i][0] = t[i];
-        for (let f = 1; f < dimL; f++) {
+        for (let f = 1; f < dimX; f++) {
             yArray[i][f] = yArray[i][0]/2+yArray[0][f]/2;
-            let chg = Math.random() * 0.1;
+            let chg = Math.random() * 0.15;
             if (Math.random() < .5) {
                 chg *= (-1);
             }
@@ -164,6 +170,160 @@ function threeDNoise(dim) {
     }
 }
 */
+
+function displayPerlinFourier(length, blur1, blur2) {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!window.ctx) {
+        let x = document.getElementById("canvasElement");
+        window.ctx = x.getContext("2d");
+    }
+    let ctx = window.ctx;
+    window.ctx.clearRect(0,0,500,500);
+    ctx.strokeStyle = "#FFFFFF";
+    let pi = Math.PI;
+    let pi2 = Math.PI*2;
+    if (!length) {
+        length = 1000
+    }
+    if (!blur1) {
+        blur1 = 50
+    }
+    if (!blur2) {
+        blur2 = 10;
+    }
+    //let oneDNoise = createNoise(length);
+    //for (let i = 0; i < blur1; i++) {
+    //    oneDNoise = blurOneD(oneDNoise);
+    //}
+    let tdn = twoDNoise(length,length, blur1);
+    for (let i = 0 ; i < blur2; i++) {
+        tdn = blurTwoD(tdn);
+    }
+    let nc = 50;
+    let oneDSlice = [];
+    //drawing a kind of square in 2d noise space to get noise that ends at the same value it starts at
+    for (let i = 0 ; i < length/4 ; i++) {
+        oneDSlice[oneDSlice.length] = tdn[nc][nc+i];
+    }
+    for (let i = 0 ; i < length/4 ; i++) {
+        oneDSlice[oneDSlice.length] = tdn[nc+i][nc-1+length/4];
+    }
+    for (let i = 0 ; i < length/4 ; i++) {
+        oneDSlice[oneDSlice.length] = tdn[nc-1+length/4][(length/4+nc-1)-i];
+    }
+    for (let i = 0 ; i < length/4 ; i++) {
+        oneDSlice[oneDSlice.length] = tdn[(nc-1+length/4)-i][nc];
+    }
+    ctx.beginPath();
+    for (let i = 0 ; i < length;i++) {
+        ctx.arc(250,250,100+oneDSlice[i]*40,(pi2*i)/length,(i+1)*pi2/length);
+    }
+    ctx.closePath();
+    ctx.stroke();
+}
+
+var nc1 = 50;
+
+    function animateShape(length, blur1, blur2) {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!window.ctx) {
+        let x = document.getElementById("canvasElement");
+        window.ctx = x.getContext("2d");
+    }
+    console.log("\ncanvas exists\n")
+    let ctx = window.ctx;
+    if(ctx) {
+        console.log("\ncanvas contex exists\n")
+    }
+    window.ctx.clearRect(0,0,500,500);
+    ctx.strokeStyle = "#FFFFFF";
+    let pi = Math.PI;
+    let pi2 = Math.PI*2;
+    if (!length) {
+        length = 1000
+    }
+    if (!blur1) {
+        blur1 = 25
+    }
+    if (!blur2) {
+        blur2 = 5;
+    }
+    console.log("length is "+length+"\nblur1 is "+blur1+"\nblur2 is "+blur2+"\n")
+    //let oneDNoise = createNoise(length);
+    //for (let i = 0; i < blur1; i++) {
+    //    oneDNoise = blurOneD(oneDNoise);
+    //}
+    let tdn = twoDNoise(length,500, blur1);
+    for (let i = 0 ; i < blur2; i++) {
+        tdn = blurTwoD(tdn);
+    }
+    let en = twoDNoise(500 ,500, 10, .2);
+    for (let i = 0 ; i < 5; i++) {
+        en = blurTwoD(en);
+    }
+    console.log("\nnoise field exists and has been blurred\n")
+    
+    let oneDSlice = [];
+    let oneDSlice2 = [];
+    //drawing a kind of square in 2d noise space to get noise that ends at the same value it starts at
+    //let flip = false;
+    nc1 = 50;
+    let nc2 = 50;
+    for (let i = 0 ; i < length/8 ; i++) {
+        oneDSlice2[oneDSlice2.length] = en[50][50+i];
+    }
+    for (let i = 0 ; i < length/8 ; i++) {
+        oneDSlice2[oneDSlice2.length] = en[50+i][49+length/8];
+    }
+    for (let i = 0 ; i < length/8 ; i++) {
+        oneDSlice2[oneDSlice2.length] = en[49+length/8][(49+length/8)-i];
+    }
+    for (let i = 0 ; i < length/8 ; i++) {
+        oneDSlice2[oneDSlice2.length] = en[(49+length/8)-i][50];
+    }
+    let timer = setInterval(function() {
+        nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*40);
+
+        oneDSlice = [];
+        oneDSlice.length = 0;
+        for (let i = 0 ; i < 200 ; i++) {
+            oneDSlice[oneDSlice.length] = tdn[nc2+i][nc1];
+        }
+        for (let i = 0 ; i < 500/2-200; i++) {
+            oneDSlice[oneDSlice.length] = tdn[nc2-1+200][nc1+i];
+        }
+        for (let i = 0 ; i < 200 ; i++) {
+            oneDSlice[oneDSlice.length] = tdn[(200+nc2-1)-i][nc1-1+500/2-200];
+        }
+        for (let i = 0 ; i < 500/2-200; i++) {
+            oneDSlice[oneDSlice.length] = tdn[nc2][(nc1-1+500/2)-i-200];
+        }
+        //if(flip) {
+            ctx.clearRect(0,0,500,500);
+        //    flip = false;
+        //} else {
+        //    flip = true;
+        //}
+        ctx.beginPath();
+        for (let i = 0 ; i < 500;i++) {
+            ctx.arc(250,250,100+oneDSlice[i]*40,((pi2*i)/500),(i+1)*pi2/500);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        nc1+=1;
+    }, 20);
+    setTimeout(function(){clearInterval(timer);},length*10);
+}
+
+function stopAnimation() {
+    clearInterval(window.timer);
+}
 
 function displayTwoDNoise(blur,blur1) {
     if (!document.getElementById("canvasElement")) {
