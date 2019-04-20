@@ -56,7 +56,7 @@ function twoDNoise(dimX,dimY,blur,onedvar) {
         yArray[i][0] = t[i];
         for (let f = 1; f < dimX; f++) {
             yArray[i][f] = yArray[i][0]/2+yArray[0][f]/2;
-            let chg = Math.random() * 0.15;
+            let chg = Math.random() * 0.01;
             if (Math.random() < .5) {
                 chg *= (-1);
             }
@@ -156,7 +156,13 @@ function twoDNoise2(dimL) {
     return oArray;
 }
 
+function twoDNoise3(dimx=500,dimy=500,blur=20,onev=.15,twov=.15,) {
+    let array = [createNoise(dimx, onev)];
+    for (let i = 0 ; i < dimy ; i++) {
 
+    }
+    return array;
+}
 
 /*
 function threeDNoise(dim) {
@@ -227,7 +233,7 @@ function displayPerlinFourier(length, blur1, blur2) {
 
 var nc1 = 50;
 
-    function animateShape(length, blur1, blur2) {
+function animateShape(length, blur1, blur2) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -263,8 +269,8 @@ var nc1 = 50;
     for (let i = 0 ; i < blur2; i++) {
         tdn = blurTwoD(tdn);
     }
-    let en = twoDNoise(500 ,500, 10, .2);
-    for (let i = 0 ; i < 5; i++) {
+    let en = twoDNoise(600 , length/8+100, 1, .2);
+    for (let i = 0 ; i < 0; i++) {
         en = blurTwoD(en);
     }
     console.log("\nnoise field exists and has been blurred\n")
@@ -274,7 +280,7 @@ var nc1 = 50;
     //drawing a kind of square in 2d noise space to get noise that ends at the same value it starts at
     //let flip = false;
     nc1 = 50;
-    let nc2 = 50;
+    let nc2 = 10;
     for (let i = 0 ; i < length/8 ; i++) {
         oneDSlice2[oneDSlice2.length] = en[50][50+i];
     }
@@ -287,22 +293,35 @@ var nc1 = 50;
     for (let i = 0 ; i < length/8 ; i++) {
         oneDSlice2[oneDSlice2.length] = en[(49+length/8)-i][50];
     }
+    let flipper = false;
     let timer = setInterval(function() {
-        nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*40);
-
+        //nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*50);
+        switch(flipper) {
+            case false:
+                nc2++;
+                if (nc2 == 125) {
+                    flipper = true;
+                }
+                break;
+            case true:
+                nc2--;
+                if (nc2 == 10) {
+                    flipper = false;
+                }
+        }
         oneDSlice = [];
         oneDSlice.length = 0;
-        for (let i = 0 ; i < 200 ; i++) {
+        for (let i = 0 ; i < 500/4+1 ; i++) {
             oneDSlice[oneDSlice.length] = tdn[nc2+i][nc1];
         }
-        for (let i = 0 ; i < 500/2-200; i++) {
-            oneDSlice[oneDSlice.length] = tdn[nc2-1+200][nc1+i];
+        for (let i = 0 ; i < 500/4+1; i++) {
+            oneDSlice[oneDSlice.length] = tdn[nc2-1+500/4+1][nc1+i];
         }
-        for (let i = 0 ; i < 200 ; i++) {
-            oneDSlice[oneDSlice.length] = tdn[(200+nc2-1)-i][nc1-1+500/2-200];
+        for (let i = 0 ; i < 500/4+1 ; i++) {
+            oneDSlice[oneDSlice.length] = tdn[(500/4+1+nc2-1)-i][nc1-1+500/4+1];
         }
-        for (let i = 0 ; i < 500/2-200; i++) {
-            oneDSlice[oneDSlice.length] = tdn[nc2][(nc1-1+500/2)-i-200];
+        for (let i = 0 ; i < 500/4+1; i++) {
+            oneDSlice[oneDSlice.length] = tdn[nc2][(nc1-1+500/4+1)-i];
         }
         //if(flip) {
             ctx.clearRect(0,0,500,500);
@@ -325,7 +344,7 @@ function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(blur,blur1) {
+function displayTwoDNoise(blur,blur1, var1,fun,var2) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -335,7 +354,16 @@ function displayTwoDNoise(blur,blur1) {
     ctx.strokeStyle = "#FFFFFF";
     
     //let noise = twoDNoise(500);
-    let noiseToDisplay = twoDNoise(500,blur1)
+    switch(fun) {
+        case 1:
+            let noiseToDisplay = twoDNoise(500,500,blur1,var1);
+            break;
+        case 2:
+            let noiseToDisplay = twoDNoise2(500);
+            break;
+        case 3:
+            let noiseToDisplay = twoDNoise(500,500,blur1,var1,var2);
+    }
     for (let i = 0; i < blur; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
     }
