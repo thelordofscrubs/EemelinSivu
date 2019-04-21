@@ -170,7 +170,7 @@ function twoDNoise2(dimL) {
     return oArray;
 }
 
-function twoDNoise3(dimx=500,dimy=500,blur=20,onev=.15,twov=.15,) {
+function twoDNoise3(dimx=500,dimy=500,blur=500,onev=.3,twov=1,) {
     let array = [createNoise(dimx, onev)];
     let array2 = createNoise(dimy, onev);
     for (let i = 0 ; i < blur ; i++) {
@@ -182,7 +182,8 @@ function twoDNoise3(dimx=500,dimy=500,blur=20,onev=.15,twov=.15,) {
         array[i][0] = array2[i];
     }
     for (let i = 1 ; i < dimy ; i++) {
-        for (let f = 0; f < dimx ; f++) {
+        for (let f = 1; f < dimx ; f++) {
+            /*
             let a = 0;
             let avg = array[i-1][f];
             a++;
@@ -195,7 +196,12 @@ function twoDNoise3(dimx=500,dimy=500,blur=20,onev=.15,twov=.15,) {
                 a++;
             }
             array[i][f] = avg/a;
-            array[i][f] += (Math.random()-.5)*twov;
+            array[i][f] += (Math.random()-.5)*twov*2;
+            */
+
+           array[i][f] = (array[i][0])*(array[0][f])*2;
+           array[i][f] += (Math.random()-.5)*twov*2;
+
         }
     }
     return array;
@@ -272,7 +278,9 @@ function displayPerlinFourier(length, blur1, blur2) {
 
 var nc1 = 50;
 
-function animateShape(length, blur1, blur2) {
+function animateShape(length=10, blur1=500, blur2 = 25) {
+    let ms = length*1000
+    let frames = length*50
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -297,17 +305,17 @@ function animateShape(length, blur1, blur2) {
     if (!blur2) {
         blur2 = 5;
     }
-    console.log("length is "+length+"\nblur1 is "+blur1+"\nblur2 is "+blur2+"\n")
+    console.log("frames: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2+"\n")
     //let oneDNoise = createNoise(length);
     //for (let i = 0; i < blur1; i++) {
     //    oneDNoise = blurOneD(oneDNoise);
     //}
-    let tdn = twoDNoise(length,500, blur1);
+    let tdn = twoDNoise3(frames + 300,500, blur1);
     for (let i = 0 ; i < blur2; i++) {
         tdn = blurTwoD(tdn);
     }
-    let en = twoDNoise(600 , length/8+100, 1, .2);
-    for (let i = 0 ; i < 0; i++) {
+    let en = twoDNoise3(200, 200, 1, .2);
+    for (let i = 0 ; i < 2; i++) {
         en = blurTwoD(en);
     }
     console.log("\nnoise field exists and has been blurred\n")
@@ -318,6 +326,7 @@ function animateShape(length, blur1, blur2) {
     //let flip = false;
     nc1 = 50;
     let nc2 = 10;
+    /*
     for (let i = 0 ; i < length/8 ; i++) {
         oneDSlice2[oneDSlice2.length] = en[50][50+i];
     }
@@ -330,6 +339,7 @@ function animateShape(length, blur1, blur2) {
     for (let i = 0 ; i < length/8 ; i++) {
         oneDSlice2[oneDSlice2.length] = en[(49+length/8)-i][50];
     }
+    */
     let flipper = false;
     let timer = setInterval(function() {
         nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*50);
@@ -375,14 +385,14 @@ function animateShape(length, blur1, blur2) {
         ctx.stroke();
         nc1+=1;
     }, 20);
-    setTimeout(function(){clearInterval(timer);},length*10);
+    setTimeout(function(){clearInterval(timer);},ms);
 }
 
 function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(blur,blur1, var1,fun=1,var2) {
+function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=3,var2 = .1) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -404,7 +414,7 @@ function displayTwoDNoise(blur,blur1, var1,fun=1,var2) {
         case 3:
             noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
     }
-    for (let i = 0; i < blur; i++) {
+    for (let i = 0; i < blur2; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
     }
     for (let i = 0; i < 500; i++) {
