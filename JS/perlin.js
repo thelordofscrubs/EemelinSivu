@@ -1,10 +1,18 @@
-noiseLength = 10000;
+var noiseLength = 10000;
+var ctx;
 
-function createNoise(alength, variance) {
+function createContext() {  
+    let x = document.getElementById("canvasDiv");
+    x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    x = document.getElementById("canvasElement")
+    ctx = x.getContext("2d");
+}
+
+function createNoise(alength, variance = .15) {
     let noise = [];
-    if (!variance) {
-        variance = .15
-    }
+    //if (!variance) {
+    //    variance = .15
+    //}
     //starting point is half
     noise[0] = .5;
     for (let i = 0; i < alength/2; i++) {
@@ -16,17 +24,23 @@ function createNoise(alength, variance) {
             chg *= (-1);
         }
         //if the number is high, then higher probability for it to go down, same for low but opposite
-        if (chg < 0 && noise[i*2] < .25) {
+        if (chg < 0 && noise[i*2] < variance*1.5) {
             if (Math.random() > noise[i]) {
                 chg *= (-1);
             }
         }
-        if (chg > 0 && noise[i*2] > .75) {
+        if (chg > 0 && noise[i*2] > 1-variance*1.5) {
             if (Math.random() < noise[i]) {
                 chg *= (-1);
             }
         }
         noise[i*2+2] = noise[i*2] + chg;
+        if (noise[i*2+2] > 1) {
+            noise[i*2+2] = 1;
+        }
+        if (noise[i*2+2] < 0) {
+            noise[i*2+2] = 0;
+        }
         noise[i*2+1] = (noise[i*2] + noise[i*2+2])/2
         //noise[i*2+2] = noise[i*2] + chg;
         //noise[i*2+1] = noise[i*2]/2 + noise[i*2+2]/2;
@@ -158,13 +172,37 @@ function twoDNoise2(dimL) {
 
 function twoDNoise3(dimx=500,dimy=500,blur=20,onev=.15,twov=.15,) {
     let array = [createNoise(dimx, onev)];
-    for (let i = 0 ; i < dimy ; i++) {
-
+    let array2 = createNoise(dimy, onev);
+    for (let i = 0 ; i < blur ; i++) {
+        array[0] = blurOneD(array[0]);
+        array2 = blurOneD(array2);
+    }
+    for (let i = 1 ; i < dimy ; i++) {
+        array[i] = [];
+        array[i][0] = array2[i];
+    }
+    for (let i = 1 ; i < dimy ; i++) {
+        array[i] = [];
+        for (let f = 0; f < dimx ; f++) {
+            let a = 0;
+            let avg = array[i-1][f];
+            a++;
+            if (array[i-1][f-1]) {
+                avg += array[i-1][f-1];
+                a++;
+            }
+            if (array[i-1][f+1]) {
+                avg += array[i-1][f+1];
+                a++;
+            }
+            array[i][f] = avg/a;
+            array[i][f] += (Math.random()-.5)*twov;
+        }
     }
     return array;
 }
 
-/*
+
 function threeDNoise(dim) {
     let zArray = [twoDNoise(dim)];
     let t1 = twoDNoise(dim);
@@ -175,19 +213,21 @@ function threeDNoise(dim) {
         
     }
 }
-*/
+
 
 function displayPerlinFourier(length, blur1, blur2) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
     }
-    if (!window.ctx) {
-        let x = document.getElementById("canvasElement");
-        window.ctx = x.getContext("2d");
+    //if (!window.ctx) {
+    //    let x = document.getElementById("canvasElement");
+    //    window.ctx = x.getContext("2d");
+    //}
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
     }
-    let ctx = window.ctx;
-    window.ctx.clearRect(0,0,500,500);
+    ctx.clearRect(0,0,500,500);
     ctx.strokeStyle = "#FFFFFF";
     let pi = Math.PI;
     let pi2 = Math.PI*2;
@@ -238,12 +278,10 @@ function animateShape(length, blur1, blur2) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
     }
-    if (!window.ctx) {
-        let x = document.getElementById("canvasElement");
-        window.ctx = x.getContext("2d");
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
     }
     console.log("\ncanvas exists\n")
-    let ctx = window.ctx;
     if(ctx) {
         console.log("\ncanvas contex exists\n")
     }
@@ -295,8 +333,8 @@ function animateShape(length, blur1, blur2) {
     }
     let flipper = false;
     let timer = setInterval(function() {
-        //nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*50);
-        switch(flipper) {
+        nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*50);
+        /*switch(flipper) {
             case false:
                 nc2++;
                 if (nc2 == 125) {
@@ -309,6 +347,7 @@ function animateShape(length, blur1, blur2) {
                     flipper = false;
                 }
         }
+        */
         oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500/4+1 ; i++) {
@@ -344,25 +383,27 @@ function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(blur,blur1, var1,fun,var2) {
+function displayTwoDNoise(blur,blur1, var1,fun=1,var2) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
     }
-    x = document.getElementById("canvasElement");
-    let ctx = x.getContext("2d");
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
+    }
     ctx.strokeStyle = "#FFFFFF";
     
     //let noise = twoDNoise(500);
+    let noiseToDisplay;
     switch(fun) {
         case 1:
-            let noiseToDisplay = twoDNoise(500,500,blur1,var1);
+            noiseToDisplay = twoDNoise(500,500,blur1,var1);
             break;
         case 2:
-            let noiseToDisplay = twoDNoise2(500);
+            noiseToDisplay = twoDNoise2(500);
             break;
         case 3:
-            let noiseToDisplay = twoDNoise(500,500,blur1,var1,var2);
+            noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
     }
     for (let i = 0; i < blur; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
@@ -384,27 +425,45 @@ function displayTwoDNoise(blur,blur1, var1,fun,var2) {
 }
 
 
-var noiseArray = createNoise(noiseLength);
+//var noiseArray = createNoise(noiseLength);
 
-function newNoise() {
-    noiseArray = createNoise(noiseLength);
-}
+//function newNoise() {
+//    noiseArray = createNoise(noiseLength);
+//}
 
-function displayNoise(xCord) {
-    let x = document.getElementById("canvasDiv");
-    x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
-    x = document.getElementById("canvasElement");
-    let ctx = x.getContext("2d");
+function displayNoise(variance=.15,blur,xCord=0) {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
+    }
+    ctx.clearRect(0,0,500,500);
+    window.ctx.clearRect(0,0,500,500);     
     ctx.strokeStyle = "#FFFFFF";
     //ctx.moveTo(0,400);
     //ctx.lineTo(500,400);
     //ctx.stroke();
+    let noiseArray = createNoise(500,variance);
+    //ctx.clearRect(0,0,500,500);
+    for (let i = 0; i < blur; i++) {
+        noiseArray = blurOneD(noiseArray);
+    }
+    ctx.beginPath();
+    ctx.moveTo(0,300);
+    ctx.lineTo(500,300);
+    ctx.moveTo(0,200);
+    ctx.lineTo(500,200);
     ctx.moveTo(0,250);
-    for (let i = 0; i < 500; i++) {
-        ctx.lineTo(i,250-noiseArray[i+xCord]*100);
-        ctx.stroke();
+    for (let i = 1; i < 250; i++) {
+        ctx.lineTo(i*2,300-noiseArray[i*2+xCord]*100);
+        let avg = noiseArray[i*2+xCord]+noiseArray[i*2+xCord+2]
+        ctx.lineTo(i*2+1,300-avg/2*100);
+        //ctx.stroke();
         //ctx.moveTo(i+1,noiseArray[i]*50);
     }
+    ctx.stroke();
 }
 
 //function moveGraph(xCord){
