@@ -182,7 +182,6 @@ function twoDNoise3(dimx=500,dimy=500,blur=20,onev=.15,twov=.15,) {
         array[i][0] = array2[i];
     }
     for (let i = 1 ; i < dimy ; i++) {
-        array[i] = [];
         for (let f = 0; f < dimx ; f++) {
             let a = 0;
             let avg = array[i-1][f];
