@@ -301,15 +301,15 @@ function animateShape(length=10, blur1=500, blur2 = 15) {
     ctx.strokeStyle = "#FFFFFF";
     let pi = Math.PI;
     let pi2 = Math.PI*2;
-    if (!length) {
-        length = 1000
-    }
-    if (!blur1) {
-        blur1 = 25
-    }
-    if (!blur2) {
-        blur2 = 5;
-    }
+    //if (!length) {
+    //    length = 1000
+    //}
+    //if (!blur1) {
+    //    blur1 = 25
+    //}
+    //if (!blur2) {
+    //    blur2 = 5;
+    //}
     console.log("\nframes: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2)
     //let oneDNoise = createNoise(length);
     //for (let i = 0; i < blur1; i++) {
