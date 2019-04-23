@@ -170,7 +170,7 @@ function twoDNoise2(dimL) {
     return oArray;
 }
 
-function twoDNoise3(dimx=500,dimy=500,blur=500,onev=.3,twov=1,) {
+function twoDNoise3(dimx=500,dimy=500,blur=500,onev=.3,twov=.5,) {
     let array = [createNoise(dimx, onev)];
     let array2 = createNoise(dimy, onev);
     for (let i = 0 ; i < blur ; i++) {
@@ -278,7 +278,7 @@ function displayPerlinFourier(length, blur1, blur2) {
 
 var nc1 = 50;
 
-function animateShape(length=10, blur1=500, blur2 = 25) {
+function animateShape(length=10, blur1=500, blur2 = 15) {
     let ms = length*1000
     let frames = length*50
     if (!document.getElementById("canvasElement")) {
@@ -288,9 +288,9 @@ function animateShape(length=10, blur1=500, blur2 = 25) {
     if (!ctx) {
         ctx = document.getElementById("canvasElement").getContext("2d");
     }
-    console.log("\ncanvas exists\n")
+    console.log("\ncanvas exists")
     if(ctx) {
-        console.log("\ncanvas contex exists\n")
+        console.log("\ncanvas contex exists")
     }
     window.ctx.clearRect(0,0,500,500);
     ctx.strokeStyle = "#FFFFFF";
@@ -305,20 +305,21 @@ function animateShape(length=10, blur1=500, blur2 = 25) {
     if (!blur2) {
         blur2 = 5;
     }
-    console.log("frames: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2+"\n")
+    console.log("\nframes: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2)
     //let oneDNoise = createNoise(length);
     //for (let i = 0; i < blur1; i++) {
     //    oneDNoise = blurOneD(oneDNoise);
     //}
     let tdn = twoDNoise3(frames + 300,500, blur1);
+    console.log("\nnoise field has been created")
     for (let i = 0 ; i < blur2; i++) {
         tdn = blurTwoD(tdn);
     }
-    let en = twoDNoise3(200, 200, 1, .2);
-    for (let i = 0 ; i < 2; i++) {
-        en = blurTwoD(en);
-    }
-    console.log("\nnoise field exists and has been blurred\n")
+    //let en = twoDNoise3(200, 200, 100, .2,5);
+    //for (let i = 0 ; i < 2; i++) {
+    //    en = blurTwoD(en);
+    //}
+    console.log("\nnoise has been blurred\n")
     
     let oneDSlice = [];
     let oneDSlice2 = [];
@@ -342,7 +343,14 @@ function animateShape(length=10, blur1=500, blur2 = 25) {
     */
     let flipper = false;
     let timer = setInterval(function() {
-        nc2 = 250 + Math.round((oneDSlice2[nc1-50]-.5)*50);
+        nc2 = 100 + Math.round((Math.sin(nc1/70-50)/2+.5)*100);
+        oneDSlice = [];
+        oneDSlice.length = 0;
+        for (let i = 0 ; i < 500 ; i++) {
+            sin = Math.round((Math.sin(i*pi/500))*100);
+            cos = Math.round((Math.cos(i*pi/500))*100);
+            oneDSlice[oneDSlice.length] = tdn[nc2+cos][sin];
+        } 
         /*switch(flipper) {
             case false:
                 nc2++;
@@ -357,6 +365,7 @@ function animateShape(length=10, blur1=500, blur2 = 25) {
                 }
         }
         */
+        /*
         oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500/4+1 ; i++) {
@@ -370,7 +379,7 @@ function animateShape(length=10, blur1=500, blur2 = 25) {
         }
         for (let i = 0 ; i < 500/4+1; i++) {
             oneDSlice[oneDSlice.length] = tdn[nc2][(nc1-1+500/4+1)-i];
-        }
+        }*/
         //if(flip) {
             ctx.clearRect(0,0,500,500);
         //    flip = false;
