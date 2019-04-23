@@ -276,8 +276,13 @@ function displayPerlinFourier(length, blur1, blur2) {
     ctx.stroke();
 }
 
-var nc1 = 50;
-
+var nc1 = 0;
+/*
+var oldSlice = [];
+for (let i = 0 ; i < 10 ; i++) {
+    oldSlice[i] = [];
+}
+*/
 function animateShape(length=10, blur1=500, blur2 = 15) {
     let ms = length*1000
     let frames = length*50
@@ -325,8 +330,8 @@ function animateShape(length=10, blur1=500, blur2 = 15) {
     let oneDSlice2 = [];
     //drawing a kind of square in 2d noise space to get noise that ends at the same value it starts at
     //let flip = false;
-    nc1 = 50;
-    let nc2 = 10;
+    nc1 = 0;
+    let nc2 = 0;
     /*
     for (let i = 0 ; i < length/8 ; i++) {
         oneDSlice2[oneDSlice2.length] = en[50][50+i];
@@ -343,13 +348,17 @@ function animateShape(length=10, blur1=500, blur2 = 15) {
     */
     let flipper = false;
     let timer = setInterval(function() {
-        nc2 = 100 + Math.round((Math.sin(nc1/70-50)/2+.5)*100);
+        nc2 = 250 + Math.round(Math.sin(nc1/100)*50);
         oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500 ; i++) {
-            sin = Math.round((Math.sin(i*pi/500))*100);
-            cos = Math.round((Math.cos(i*pi/500))*100);
-            oneDSlice[oneDSlice.length] = tdn[nc2+cos][sin];
+            sin = Math.round((Math.sin(i*pi2/500))*50)+50;
+            cos = Math.round((Math.cos(i*pi2/500))*50)+10;
+            if (nc1 < frames/2) {
+                oneDSlice[oneDSlice.length] = tdn[nc2+cos][sin+nc1+50];
+            }else {
+                oneDSlice[oneDSlice.length] = tdn[nc2+cos][sin+frames-nc1+50];
+            }
         } 
         /*switch(flipper) {
             case false:
@@ -388,10 +397,42 @@ function animateShape(length=10, blur1=500, blur2 = 15) {
         //}
         ctx.beginPath();
         for (let i = 0 ; i < 500;i++) {
-            ctx.arc(250,250,100+oneDSlice[i]*40,((pi2*i)/500),(i+1)*pi2/500);
+            ctx.arc(250,250,100+oneDSlice[i]*20,((pi2*i)/500),(i+1)*pi2/500);
         }
         ctx.closePath();
         ctx.stroke();
+        /*
+        for (let f = 0 ; f < 10 ; f++) {
+            if (oldSlice[f][0]) {
+                switch (f) {
+                    case 0:
+                        ctx.strokeStyle = "CCCCCC";
+                        break;
+                    case 1:
+                        ctx.strokeStyle = "999999";
+                        break;
+                    case 2:
+                        ctx.strokeStyle = "666666";
+                        break;
+                    case 3:
+                        ctx.strokeStyle = "333333";
+                        break;
+                }
+                ctx.beginPath();
+                for (let i = 0 ; i < 500;i++) {
+                    ctx.arc(250,250,100+oneDSlice[i]*20,((pi2*i)/500),(i+1)*pi2/500);
+                }
+                ctx.closePath();
+                ctx.stroke();        
+            } else {
+                break;
+            }
+        }
+        for (let i = 9 ; i > 1 ; i--) {
+            oldSlice [i] = oldSlice[i-1];
+        }
+        oldSlice[0] = oneDSlice;
+        */
         nc1+=1;
     }, 20);
     setTimeout(function(){clearInterval(timer);},ms);
