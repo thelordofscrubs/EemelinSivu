@@ -350,7 +350,7 @@ function animateShape(length=10, blur1=100, blur2 = 5) {
     let flipper = false;
     let timer = setInterval(function() {
         let nc2 = 250 + Math.round(Math.sin(nc1/100)*50);
-        let nc3 = Math.round(Math.cos(nc1/frames*pi2)*(frames/2));
+        let nc3 = Math.round(Math.cos(nc1/frames*pi2)*(frames/2)/2);
         oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500 ; i++) {

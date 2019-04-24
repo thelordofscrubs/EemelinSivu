@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+    <link rel="stylesheet", type="text/css", href="/CSS/main.css"/>
+    <script src="/JS/Navbar.js"></script>
+</head>
+<body>
+<div class="navbar" id="navbar">        
+</div>
+<div style="margin:20px;"></div>
+<input id = "inputName" value= "name" onclick="this.value=''"/>
+<input id = "inputAge" value= "age" onclick="this.value=''"/>
+<button onclick = "input()">Submit</button>
+<div style="margin:20px;"></div>
+<button onclick="displayMinor()">
+Show Minor
+</button>
+<button onclick="displayAdult()">
+Show Adults
+</button>
+<p id="outputP"></p>
+
+
+<script>NavBar()</script>
+
+
+
+
+
+
+<script>
+var members = [];
+
+function input() {
+    let x = document.getElementById("inputName");
+    let y =document.getElementById("inputAge");
+    let name = x.value;
+    let age = y.value;
+    members[members.length] = new person(name,age);
+}
+
+function person(n,a) {
+    this.name = n;
+    this.age = a;
+}
+
+function displayMinor() {
+    x = document.getElementById("outputP");
+    let minors = [];
+    // put all minors into new array
+    for (let i = 0 ; i < members.length ; i++) {
+        if (members[i].age < 18) {
+            minors[minors.length] = members[i];
+        }
+    }
+    //display all minors in new array
+    x.innerHTML = "";
+    for (let i = 0 ; i < minors.length ; i++) {
+        x.insertAdjacentHTML("beforeend", "\
+        "+minors[i].name+","+minors[i].age+" years<br>\
+        ");
+    }
+}
+
+function displayAdult() {
+    x = document.getElementById("outputP");
+    let adults = [];
+    // put all minors into new array
+    for (let i = 0 ; i < members.length ; i++) {
+        if (members[i].age >= 18) {
+            adults[adults.length] = members[i];
+        }
+    }
+    //display all minors in new array
+    x.innerHTML = "";
+    for (let i = 0 ; i < adults.length ; i++) {
+        x.insertAdjacentHTML("beforeend", "\
+        "+adults[i].name+","+adults[i].age+" years<br>\
+        ");
+    }
+}
+</script>
+
+</body>
+</html>
