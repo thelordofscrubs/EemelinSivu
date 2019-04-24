@@ -278,16 +278,68 @@ function displayPerlinFourier(length, blur1, blur2) {
     ctx.stroke();
 }
 
-var nc1 = 0;
+var frameCoun = 0;
 /*
 var oldSlice = [];
 for (let i = 0 ; i < 10 ; i++) {
     oldSlice[i] = [];
 }
 */
+
+function animateShape2(length=10, blur1=100, blur2 = 5) {
+    //let ms = length*1000;
+    let frames = length*40;
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
+    }
+    console.log("\ncanvas exists");
+    if(ctx) {
+        console.log("\ncanvas contex exists");
+    }
+    window.ctx.clearRect(0,0,500,500);
+    ctx.strokeStyle = "#FFFFFF";
+    let pi = Math.PI;
+    let pi2 = Math.PI*2;
+    console.log("\nframes: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2);
+    let tdn = twoDNoise3(frames + 500,1000, blur1);
+    console.log("\nnoise field has been created");
+    for (let i = 0 ; i < blur2; i++) {
+        tdn = blurTwoD(tdn);
+    }
+    console.log("\nnoise has been blurred\n");
+    frameCounter = 0;
+    var timer = setInterval(function() {
+        let nc2 = 250 + Math.round(Math.sin(frameCounter/20)*50);
+        let nc3 = Math.round((Math.cos(frameCounter/frames*pi2)*(-1)+1)*frames/2);
+        let oneDSlice = [];
+        oneDSlice.length = 0;
+        for (let i = 0 ; i < 500 ; i++) {
+            sin = Math.round((Math.sin(i*pi2/500))*200)+200;
+            cos = Math.round((Math.cos(i*pi2/500))*200);
+            oneDSlice[oneDSlice.length] = tdn[nc2+cos][nc3+sin];
+        }
+        ctx.clearRect(0,0,500,500);
+        ctx.beginPath();
+        for (let i = 0 ; i < 500;i++) {
+            ctx.arc(250,250,100+oneDSlice[i]*20,((pi2*i)/500),(i+1)*pi2/500);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        frameCounter+=1;
+        if (frameCounter == frames) {
+            clearInterval(timer);
+        }
+    }, 25);
+    //setTimeout(function(){clearInterval(timer);},ms);
+}
+
 function animateShape(length=10, blur1=100, blur2 = 5) {
     let ms = length*1000
-    let frames = length*50
+    let frames = length*40
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -327,12 +379,11 @@ function animateShape(length=10, blur1=100, blur2 = 5) {
     //    en = blurTwoD(en);
     //}
     console.log("\nnoise has been blurred\n")
-    
     let oneDSlice = [];
     let oneDSlice2 = [];
     //drawing a kind of square in 2d noise space to get noise that ends at the same value it starts at
     //let flip = false;
-    nc1 = 0;
+    frameCounter = 0;
     /*
     for (let i = 0 ; i < length/8 ; i++) {
         oneDSlice2[oneDSlice2.length] = en[50][50+i];
@@ -349,14 +400,14 @@ function animateShape(length=10, blur1=100, blur2 = 5) {
     */
     let flipper = false;
     let timer = setInterval(function() {
-        let nc2 = 250 + Math.round(Math.sin(nc1/100)*50);
-        let nc3 = Math.round(Math.cos(nc1/frames*pi2)*(frames/2)/2);
+        let nc2 = 250 + Math.round(Math.sin(frameCounter/100)*50);
+        let nc3 = Math.round(Math.cos(frameCounter/frames*pi2)*(frames/2));
         oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500 ; i++) {
             sin = Math.round((Math.sin(i*pi2/500))*50)+50;
             cos = Math.round((Math.cos(i*pi2/500))*50)+10;
-            //if (nc1 < frames/2) {
+            //if (frameCounter < frames/2) {
                 oneDSlice[oneDSlice.length] = tdn[nc2+cos][sin+nc3];
             //}else {
             //    oneDSlice[oneDSlice.length] = tdn[nc2+cos][sin+frames-nc3+50];
@@ -380,16 +431,16 @@ function animateShape(length=10, blur1=100, blur2 = 5) {
         oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500/4+1 ; i++) {
-            oneDSlice[oneDSlice.length] = tdn[nc2+i][nc1];
+            oneDSlice[oneDSlice.length] = tdn[nc2+i][frameCounter];
         }
         for (let i = 0 ; i < 500/4+1; i++) {
-            oneDSlice[oneDSlice.length] = tdn[nc2-1+500/4+1][nc1+i];
+            oneDSlice[oneDSlice.length] = tdn[nc2-1+500/4+1][frameCounter+i];
         }
         for (let i = 0 ; i < 500/4+1 ; i++) {
-            oneDSlice[oneDSlice.length] = tdn[(500/4+1+nc2-1)-i][nc1-1+500/4+1];
+            oneDSlice[oneDSlice.length] = tdn[(500/4+1+nc2-1)-i][frameCounter-1+500/4+1];
         }
         for (let i = 0 ; i < 500/4+1; i++) {
-            oneDSlice[oneDSlice.length] = tdn[nc2][(nc1-1+500/4+1)-i];
+            oneDSlice[oneDSlice.length] = tdn[nc2][(frameCounter-1+500/4+1)-i];
         }*/
         //if(flip) {
             ctx.clearRect(0,0,500,500);
@@ -435,8 +486,8 @@ function animateShape(length=10, blur1=100, blur2 = 5) {
         }
         oldSlice[0] = oneDSlice;
         */
-        nc1+=1;
-    }, 20);
+        frameCounter+=1;
+    }, 25);
     setTimeout(function(){clearInterval(timer);},ms);
 }
 
