@@ -305,7 +305,7 @@ function animateShape2(length=10, blur1=100, blur2 = 5) {
     let pi = Math.PI;
     let pi2 = Math.PI*2;
     console.log("\nframes: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2);
-    let tdn = twoDNoise3(frames + 500,1000, blur1);
+    let tdn = twoDNoise3(frames*2,1000, blur1);
     console.log("\nnoise field has been created");
     for (let i = 0 ; i < blur2; i++) {
         tdn = blurTwoD(tdn);
@@ -313,12 +313,12 @@ function animateShape2(length=10, blur1=100, blur2 = 5) {
     console.log("\nnoise has been blurred\n");
     frameCounter = 0;
     var timer = setInterval(function() {
-        let nc2 = 250 + Math.round(Math.sin(frameCounter/20)*50);
-        let nc3 = Math.round((Math.cos(frameCounter/frames*pi2)*(-1)+1)*frames/2);
+        let nc2 = 700 + Math.round(Math.sin(frameCounter/30)*50);
+        let nc3 = 350 + Math.round((Math.cos(frameCounter/frames*pi2)*(-1)+1)*frames/3);
         let oneDSlice = [];
         oneDSlice.length = 0;
         for (let i = 0 ; i < 500 ; i++) {
-            sin = Math.round((Math.sin(i*pi2/500))*200)+200;
+            sin = Math.round((Math.sin(i*pi2/500))*200);
             cos = Math.round((Math.cos(i*pi2/500))*200);
             oneDSlice[oneDSlice.length] = tdn[nc2+cos][nc3+sin];
         }

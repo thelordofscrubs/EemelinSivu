@@ -1,0 +1,193 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Custom Array Creation</title>
+</head>
+<body style="margin:50px;">
+    <div id="in1">
+        <button onclick="editCurrentJob()">
+            New Array
+        </button>
+        <br/>
+        <button onclick="importArray()">
+            Import JSON Array
+        </button>
+    </div>
+    <div id="out1">
+
+    </div>
+    <br>
+    <div id="commands">
+        <button onclick="displayJSON()">
+            Show Current JSON
+        </button>
+        <button onclick="clipJSON()">
+            Copy current JSON to clipboard
+        </button>
+        Edit an old job:
+        <input id = "aIndexIn" value="Insert Job Index to Edit"/>
+        <button onclick="changeIndex()">
+            Submit Array Index
+        </button>
+        <button onclick="displayArray()">
+            Show List of Jobs
+        </button>
+    </div>
+
+    <script>
+        var jobs = [];
+        var currentJob = 0;
+
+        function displayArray() {
+            let x = document.getElementById("out1")
+            let y = "<br>";
+            for (let i = 0 ; i < jobs.length ; i++) {   
+                y = y.concat("Job: "+jobs[i].title+", Index: "+i+"<br>");
+            }
+            y = y.concat("<br>")
+            x.innerHTML = y;
+        }
+
+        function changeIndex() {
+            let x = document.getElementById("aIndexIn").value;
+            currentJob = x;
+            displayCurrentJob(jobs, x);
+            editCurrentJob();
+        }
+
+        function importArray() {
+            if (document.getElementById("JSONinput")) {
+                let JSONtext = document.getElementById("JSONinput").value;
+                jobs = JSON.parse(JSONtext);
+                currentJob = jobs.length-1;
+                displayCurrentJob(jobs,currentJob);
+                editCurrentJob();
+                return;
+            }
+            let x = document.getElementById("in1");
+            x.innerHTML = "\
+            <input id='JSONinput' value='Paste JSON Array Here' onclick='this.value = \"\"'/>\
+            <br/><button onclick='importArray()'>Submit</button>\
+            ";
+
+        }
+
+        function displayJSON() {
+            let x = document.getElementById("out1");
+            x.innerHTML = JSON.stringify(jobs);
+        }
+
+        function displayCurrentJob(array,index) {
+            let x = document.getElementById("out1");
+            let y = "";
+            let a = array[index];
+            y = y.concat("Job: "+a.title+", Location: " + a.location + ",<br/>Keywords:<br/>");
+            for (let i = 1 ; i <= a.keywords.length; i++) {
+                y = y.concat(a.keywords[i-1]);
+                if (i%5==0) {
+                    y = y.concat(",<br/>");
+                }else {
+                    y = y.concat(", ");
+                }
+            }
+            x.innerHTML = y+"<br><br><br>";    
+        }
+
+        function editKeywords() {
+            let words = jobs[currentJob].keywords;
+            let x = document.getElementById("out1");
+            let y = "<table style='border:1px solid black;border-collapse:collapse;'>";
+            let i1 = 0;
+            for (let i = 0 ; i < 5 ; i++) {
+                y = y.concat("<tr style='border:1px solid black;border-collapse:collapse;'>");
+                for (let f = 0 ; f < Math.ceil(words.length/5) ; f++) {
+                    if (words[i1]) {
+                        y = y.concat("<td style='border:1px solid black;border-collapse:collapse;' onclick=''><div contenteditable='true' onblur='this.addEventListener(\"keydown\",enterSubmitThis)' onfocus='this.addEventListener(\"keydown\",enterSubmitThis)'>"+(i1)+": "+words[i1]+"</div></td>");
+                    }
+                    i1++;
+                }
+                y = y.concat("</tr>");
+            }
+            y = y.concat("</table>");
+            x.innerHTML = y;
+        }
+
+        function enterSubmitThis(e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                let x = parseInt(this.textContent.slice(0,1));
+                if (this.textContent.slice(2) == "") {
+                    let y = this.textContent.slice(3);    
+                } else {
+                    let y = this.textContent.slice(2);
+                }
+                //let y = this.textContent.slice(3);
+                jobs[currentJob].keywords[x] = y;
+            }
+        }
+
+        function editCurrentJob() {
+            if (!jobs[currentJob]) {
+                jobs[currentJob] = new job("","")
+                jobs[currentJob].keywords = [];
+            }
+            let x = document.getElementById("in1");
+            x.innerHTML = "\
+            <input id='titleIn'/><button onclick='updateTitle()'>Submit Job Title</button><input id='locationIn'/><button onclick='updateLocation()'>Submit Job Location</button><br>\
+            <input id='keywordIn' onblur='this.removeEventListener(\"keydown\",enterSubmit);' onfocus='this.addEventListener(\"keydown\", enterSubmit);'/><button onclick='updateKeyword()'>Submit Keyword</button>or press enter to submit keyword <button onclick='editKeywords()'>Edit Existing Keywords</button><br><button onclick='incrementJob()'>Next Job</button>\
+            ";
+        }
+
+        function incrementJob() {
+            currentJob++;
+            editCurrentJob();
+        }
+
+        function updateTitle() {
+            let x = document.getElementById("titleIn").value
+            jobs[currentJob].title = x;
+            displayCurrentJob(jobs,currentJob);
+        }
+
+        function updateLocation() {
+            let x = document.getElementById("locationIn").value
+            jobs[currentJob].location = x;
+            displayCurrentJob(jobs,currentJob);
+        }
+
+        function updateKeyword() {
+            let x = document.getElementById("keywordIn");
+            if (!x.value) {
+                return;
+            }
+            let newWord = x.value;
+            jobs[currentJob].keywords.push(newWord);
+            displayCurrentJob(jobs,currentJob);
+            x.value = "";
+        }
+
+        function enterSubmit(e) {
+            if (e.keyCode == 13) {  
+                updateKeyword();
+            }
+        }
+
+        function clipJSON() {
+
+        }
+
+        function submitInput() {
+            let title = document.getElementById("in1");
+            let location = document.getElementById("in2");
+            jobs.push(new job(title, location));
+        }
+
+        function job(t,l) {
+            this.title = t;
+            this.location = l;
+            this.keywords = [];
+        }
+    </script>
+</body>
+
+</html>
