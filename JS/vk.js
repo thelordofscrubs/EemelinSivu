@@ -55,12 +55,12 @@ function getComments() {
     xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log("readyState is 4 and status is 200");
-            if (this.responseXML) {
-                let xml = this.responseXML;
-            } else {
+            if (!this.responseXML) {
                 console.log("this.responseXML does nto exist, exiting");
                 return;
             }
+            let xml = this.responseXML;
+            console.log(xml);
             for (let i = 0 ; i < xml.getElementsByTagName("comment").length ; i++) {
                 commentArray[i] = new comment(xml.getElementsByTagName("value")[i],xml.getElementsByTagName("name")[i],xml.getElementsByTagName("timeStamp")[i]);
             }
