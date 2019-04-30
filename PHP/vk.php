@@ -41,9 +41,9 @@ $newXMLElement = $xml->createElement('comment');
 
 
 
-$xml->load(WEBROOT.'/xml/vk.xml');
+$xml->load(WEBROOT.'/XML/vk.xml');
 $xml->documentElement->appendChild($xml->importNode($newXMLElement));
-$xml->save(WEBROOT.'/xml/vk.xml');
+$xml->save(WEBROOT.'/XML/vk.xml');
 echo "reached end of php";
 exit;
 
