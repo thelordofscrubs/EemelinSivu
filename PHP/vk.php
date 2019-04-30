@@ -6,7 +6,7 @@ $newComment = json_decode($_REQUEST["q"], false);
 define('WEBROOT', $_SERVER['DOCUMENT_ROOT']);
 
 class commentobj {
-    public function __construct(n,v,t) {
+    public function __construct($n,$v,$t) {
         $this->name = $n;
         $this->value = $v;
         $this->timeStamp = $t;
@@ -41,9 +41,10 @@ $newXMLElement = $xml->createElement('comment');
 
 
 
-$doc = $xml->load(WEBROOT.'xml/vk.xml');
-$doc->appendChild($newXMLElement);
-$doc->save(WEBROOT.'xml/vk.xml');
+$xml->load(WEBROOT.'/xml/vk.xml');
+$xml->documentElement->appendChild($xml->importNode($newXMLElement));
+$xml->save(WEBROOT.'/xml/vk.xml');
+echo "reached end of php";
 exit;
 
 ?>

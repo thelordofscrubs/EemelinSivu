@@ -43,6 +43,7 @@ function PushComment(commentOb) {
     xhr.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             console.log("score sent to xml");
+            console.log(this.responseText);
         }
     }
     let jsoncomment = JSON.stringify(commentOb);
@@ -60,9 +61,10 @@ function getComments() {
                 return;
             }
             let xml = this.responseXML;
+            //console.log(this.responseText);
             console.log(xml);
             for (let i = 0 ; i < xml.getElementsByTagName("comment").length ; i++) {
-                commentArray[i] = new comment(xml.getElementsByTagName("value")[i],xml.getElementsByTagName("name")[i],xml.getElementsByTagName("timeStamp")[i]);
+                commentArray[i] = new comment(xml.getElementsByTagName("value")[i].childNodes[0].nodeValue,xml.getElementsByTagName("name")[i].childNodes[0].nodeValue,xml.getElementsByTagName("timeStamp")[i].childNodes[0].nodeValue);
             }
             displayComments();
         }   
