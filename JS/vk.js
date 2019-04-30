@@ -20,7 +20,7 @@ function submitComment() {
     var name = document.getElementById("commentName").value;
     let d = new Date();
     commentArray.push(new comment(commentContent, name, d.toString()));
-    PushComment(commentArray[commentArray.length]);
+    PushComment(commentArray[commentArray.length-1]);
 }
 
 function comment(content, name, time) {
