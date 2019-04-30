@@ -28,17 +28,18 @@ $xml = new DomDocument();
 #}
 
 #$a[$a->length] = $newCommentOb;
-$newXMLElement = $xml->createElement('comment');
-    $te = $xml->createElement('name');
-        $tt = $xml->createTextNode($newComment->name);
+$newxml = new DomDocument();
+$newXMLElement = $newxml->createElement('comment');
+    $te = $newxml->createElement('name');
+        $tt = $newxml->createTextNode($newComment->name);
         $te->appendChild($tt);
     $newXMLElement->appendChild($te);
-    $te = $xml->createElement('value');
-        $tt = $xml->createTextNode($newComment->value);
+    $te = $newxml->createElement('value');
+        $tt = $newxml->createTextNode($newComment->value);
         $te->appendChild($tt);
     $newXMLElement->appendChild($te);
-    $te = $xml->createElement('timeStamp');
-        $tt = $xml->createTextNode($newComment->timeStamp);
+    $te = $newxml->createElement('timeStamp');
+        $tt = $newxml->createTextNode($newComment->timeStamp);
         $te->appendChild($tt);
     $newXMLElement->appendChild($te);
 
