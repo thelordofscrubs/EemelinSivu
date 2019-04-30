@@ -47,6 +47,7 @@ function PushComment(commentOb) {
         }
     }
     let jsoncomment = JSON.stringify(commentOb);
+    console.log(jsoncomment);
     xhr.open("GET", "/PHP/vk.php?q="+jsoncomment, true);
     xhr.send();
 }
