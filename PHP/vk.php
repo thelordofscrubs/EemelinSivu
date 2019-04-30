@@ -5,8 +5,8 @@ ini_set('display_startup_errors',1);
 $newComment = json_decode($_REQUEST["q"], false);
 define('WEBROOT', $_SERVER['DOCUMENT_ROOT']);
 
-echo $newComment;
-echo 'Same but with json encode: '.json_encode($newComment);
+#echo $newComment;
+#echo 'Same but with json encode: '.json_encode($newComment);
 
 class commentobj {
     public function __construct($n,$v,$t) {
