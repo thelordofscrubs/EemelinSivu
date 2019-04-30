@@ -2,7 +2,16 @@ var commentArray = [];
 
 
 function displayComments() {
-
+    let x = document.getElementById("comments");
+    x.innerHTML = "";
+    for (let i = 0 ; i < commentArray.length ; i++) {        
+        x.insertAdjacentHTML("beforeend","\
+        <div class='comment'>\
+        <h6 class='commentHeader'>"+commentArray[i].name+"</h6>\
+        <p class='commentBody'>"+commentArray[i].value+"</p>\
+        <p class='timeStamp'>"+commentArray[i].timeStamp.slice(0,25)+"</p>\
+        </div>");
+    }
 }
 
 function submitComment() {
@@ -10,7 +19,7 @@ function submitComment() {
     var commentContent = commentField.value;
     var name = document.getElementById("commentName").value;
     let d = new Date();
-    commentArray.push(new comment(commentContent, name, d.getTime()));
+    commentArray.push(new comment(commentContent, name, d.toString()));
     PushComment(commentArray[commentArray.length]);
 }
 

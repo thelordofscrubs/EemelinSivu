@@ -13,10 +13,37 @@ class commentobj {
     }
 }
 
-$newCommentOb = new commentobj($newComment->value, $newComment->name, $newComment->timeStamp);
+#$a = array();
 
-$xml = new
+#$newCommentOb = new commentobj($newComment->value, $newComment->name, $newComment->timeStamp);
+
+$xml = new DomDocument();
+#$xml->load(WEBROOT.'xml/vk.xml');
+#for ($i = 0 ; $i < $xml->getElementsByTagName('comment')->length ; $i++) {
+#    $tempOb = new commentobj($xml->getElementsByTagName('name')[$i],$xml->getElementsByTagName('value')[$i],$xml->getElementsByTagName('timeStamp')[$i]);
+#    $a[$i] = $tempOb;
+#}
+
+#$a[$a->length] = $newCommentOb;
+$newXMLElement = $xml->createElement('comment');
+    $te = $xml->createElement('name');
+        $tt = $xml->createTextNode($newComment->name);
+        $te->appendChild($tt);
+    $newXMLElement->appendChild($te);
+    $te = $xml->createElement('value');
+        $tt = $xml->createTextNode($newComment->value);
+        $te->appendChild($tt);
+    $newXMLElement->appendChild($te);
+    $te = $xml->createElement('timeStamp');
+        $tt = $xml->createTextNode($newComment->timeStamp);
+        $te->appendChild($tt);
+    $newXMLElement->appendChild($te);
 
 
+
+$doc = $xml->load(WEBROOT.'xml/vk.xml');
+$doc->appendChild($newXMLElement);
+$doc->save(WEBROOT.'xml/vk.xml');
+exit;
 
 ?>
