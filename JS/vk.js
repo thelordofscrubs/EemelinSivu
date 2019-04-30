@@ -72,5 +72,5 @@ function getComments() {
     }
     xhr.open("GET", "/XML/vk.xml", true);
     xhr.send();
-    displayComments();
+    //displayComments();
 }
