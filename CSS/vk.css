@@ -16,7 +16,7 @@
     margin-left:auto;
 }
 
-#commentName {
+.commentName {
     display:block;
 }
 
@@ -30,4 +30,8 @@
     display:flex;
     justify-content: center;
     width:100%;
+}
+
+.timeStamp {
+    font-size: .7em;
 }
