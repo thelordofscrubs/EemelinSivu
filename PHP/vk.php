@@ -28,25 +28,26 @@ $xml = new DomDocument();
 #}
 
 #$a[$a->length] = $newCommentOb;
-$newxml = new DomDocument();
-$newXMLElement = $newxml->createElement('comment');
-    $te = $newxml->createElement('name');
-        $tt = $newxml->createTextNode($newComment->name);
-        $te->appendChild($tt);
-    $newXMLElement->appendChild($te);
-    $te = $newxml->createElement('value');
-        $tt = $newxml->createTextNode($newComment->value);
-        $te->appendChild($tt);
-    $newXMLElement->appendChild($te);
-    $te = $newxml->createElement('timeStamp');
-        $tt = $newxml->createTextNode($newComment->timeStamp);
-        $te->appendChild($tt);
-    $newXMLElement->appendChild($te);
-
-
-
+#$newxml = new DomDocument();
 $xml->load(WEBROOT.'/XML/vk.xml');
-$xml->documentElement->appendChild($xml->importNode($newXMLElement));
+$newXMLElement = $xml->createElement('comment');
+    $te = $xml->createElement('name');
+        $tt = $xml->createTextNode($newComment->name);
+        $te->appendChild($tt);
+    $newXMLElement->appendChild($te);
+    $te = $xml->createElement('value');
+        $tt = $xml->createTextNode($newComment->value);
+        $te->appendChild($tt);
+    $newXMLElement->appendChild($te);
+    $te = $xml->createElement('timeStamp');
+        $tt = $xml->createTextNode($newComment->timeStamp);
+        $te->appendChild($tt);
+    $newXMLElement->appendChild($te);
+
+
+
+#$xml->load(WEBROOT.'/XML/vk.xml');
+$xml->documentElement->appendChild($newXMLElement);
 $xml->formatOutput = true;
 $xml->save(WEBROOT.'/XML/vk.xml');
 echo "reached end of php";
