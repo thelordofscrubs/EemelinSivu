@@ -17,10 +17,14 @@ function displayComments() {
 function submitComment() {
     var commentField = document.getElementById("commentin");
     var commentContent = commentField.value;
+    if (commentContent == "" || commentContent == "Insert comment here") {
+        return;
+    }
     var name = document.getElementById("commentName").value;
     let d = new Date();
     commentArray.push(new comment(commentContent, name, d.toString()));
     PushComment(commentArray[commentArray.length-1]);
+    commentField.value = "";
 }
 
 function comment(content, name, time) {
