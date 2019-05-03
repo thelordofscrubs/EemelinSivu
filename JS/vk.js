@@ -65,6 +65,8 @@ function getComments() {
             let xml = this.responseXML;
             //console.log(this.responseText);
             console.log(xml);
+            commentArray = [];
+            commentArray.length = 0;
             for (let i = 0 ; i < xml.getElementsByTagName("comment").length ; i++) {
                 let value = xml.getElementsByTagName("value")[i].childNodes[0].nodeValue;
                 let name = xml.getElementsByTagName("name")[i].childNodes[0].nodeValue;
