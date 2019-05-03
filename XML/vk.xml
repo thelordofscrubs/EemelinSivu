@@ -1,8 +1,2 @@
 <?xml version="1.0"?>
-<comments>
-    <comment>
-        <name>test</name>
-        <value>This is a test comment</value>
-        <timeStamp>Tue Apr 30 2019 10:41:23 GMT+0300 (Eastern European Summer Time)</timeStamp>
-    </comment>
-<comment><name>Eemeli</name><value>Local Submit test</value><timeStamp>Tue Apr 30 2019 13:52:30 GMT 0300 (Eastern European Summer Time)</timeStamp></comment><comment><name>Eemeli</name><value>Test 2</value><timeStamp>Tue Apr 30 2019 13:53:59 GMT 0300 (Eastern European Summer Time)</timeStamp></comment></comments>
+<comments></comments>
