@@ -8,6 +8,9 @@ video {
     position: relative;
 }
 
+#vid {
+    margin-top:20px;
+}
 
 footer {
     width:100%;

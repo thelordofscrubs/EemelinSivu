@@ -16,6 +16,28 @@ body {
     justify-self: center;
 }
 
+#vid {
+    display:grid;
+    grid-template-columns: auto 300px;
+    margin-top:10px;
+}
+
+#vidInfo {
+    margin-top:7px;
+    margin-left:10px;
+}
+
+@media screen and (max-width:967px) {
+    #vid {
+        grid-template-columns: auto;
+        grid-template-rows: auto auto;
+    }
+    #vidInfo {
+        margin-top:10px;
+        margin-left:0px;
+    }
+}
+
 footer {
     width:100%;
     
@@ -46,7 +68,7 @@ footer {
     grid-row-gap: 3px;
 }
 
-@media screen and (min-width:767) {
+@media screen and (max-width:767px) {
     #merch {
         grid-template-columns:auto auto;
         grid-template-rows: auto auto auto;

@@ -29,15 +29,18 @@ function backToMain() {
 function style1() {
     let x = document.getElementById("styleLink");
     x.setAttribute("href","/CSS/fancy1.css");
+    vidParam();
 }
 
 function style2() {
     let x = document.getElementById("styleLink");
     x.setAttribute("href","/CSS/fancy2.css");
+    vidParam();
 }
 function style3() {
     let x = document.getElementById("styleLink");
     x.setAttribute("href","/CSS/fancy3.css");
+    vidParam();
 }
 
 function vidParam() {
@@ -57,7 +60,7 @@ function vidParam() {
     },200);
 }
 
-
+window.addEventListener("resize", vidParam);
 
 
 

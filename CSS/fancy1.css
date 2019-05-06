@@ -12,6 +12,28 @@ body {
     overflow-x:overlay;
 }
 
+#vid {
+    display:flex;
+    margin-top:20px
+}
+
+#vidInfo {
+    max-width:300px;
+}
+
+@media screen and (max-width:767px) {
+    #vidInfo {
+        max-width:400px;
+    }
+    #vid{
+        flex-wrap: wrap;
+    }
+}
+
+video {
+    margin-right:10px;
+}
+
 #merch {
     display:flex;
     flex-wrap: wrap;
@@ -40,8 +62,10 @@ footer {
 #merchParent {
     width:100%;
     display:flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+
 }
 
 #info1Child {
@@ -70,4 +94,9 @@ footer {
 
 #contact {
     margin:20px;
+    display:flex;
+}
+
+#contact>* {
+    margin-right:10px;
 }
