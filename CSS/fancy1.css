@@ -8,7 +8,6 @@ header {
 body {
     display:flex;
     flex-direction: column;
-    overflow-x:overlay;
 }
 
 #style1 {
