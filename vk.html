@@ -21,9 +21,9 @@
         </div>
     </div>
     <div id="input">
-        <input id="commentName" onclick="this.value=''" value="Insert name here"/>
+        <input id="commentName" onfocus="if (this.value=='Insert name here') {this.value=''}" value="Insert name here"/>
             <div id="commentflex">
-                <input id="commentin" onclick="this.value = '';" value="Insert comment here"/>
+                <input id="commentin" onfocus="if (this.value=='Insert comment here') {this.value=''}" value="Insert comment here"/>
                 <button onclick="submitComment();">Submit Comment</button>
     
             </div>

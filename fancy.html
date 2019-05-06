@@ -2,39 +2,76 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title></title>
+    <title>CSS Project</title>
+    <link id="styleLink" rel="stylesheet", type="text/css", href="/CSS/fancy3.css"/>
     <link rel="stylesheet", type="text/css", href="/CSS/fancy.css"/>
+    <script src="/JS/fancy.js"></script>
 <!--    <script src="/JS/Navbar.js"></script> -->
 </head>
-<div id="navButton" onclick="showNav()">
+<body onload="vidParam()">
+<div id="navCont">
+    <div id="navButCont"><img src="/pictures/navbar.jpg" id="navButton" onclick="showNav()"/></div>    
+    <nav id="navbarParent">
+    </nav>
 </div>
-<nav>
-    <div class="ssButton" id="style1">
-    </div>
-    <div class="ssButton" id="style2">
-    </div>
-    <div class="ssButton" id="style3">
-    </div>
-    <div class="ssButton" id="style4">
-    </div>
-</nav>
-
 <header>
     
-    <h2>
+    <h1>
         Eemeli's nice looking site
-    </h2>
+    </h1>
 </header>
 
-<body>
-
-
-
+<div id="realbody">
+<div id="info1">
+    <div id="info1Child">
+        <span>
+            Here you might have some information on the site and what its about
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vulputate odio diam, ac luctus tellus tincidunt ut. Donec non eleifend neque. Nam scelerisque justo ac erat lacinia molestie. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum imperdiet est at aliquet imperdiet. Donec iaculis lacus eros, suscipit dictum lectus sodales euismod. Quisque consectetur diam erat, egestas viverra leo congue vitae.        
+            </span>
+            <video width="" height="" id="infoVid">Spot for a video</video>
+            <div id="vidFloater"></div>
+    </div>
+</div>
+<div id="merchParent">
+    <div id="merchChild">
+            Here you might want to plug some merch
+    </div>
+    <div id="merch">
+        <div id="merch1" class="shirtCont"><img src="/pictures/shirt.jpg" height="0" width="0"/></div>
+        <div id="merch2" class="shirtCont"><img src="/pictures/shirt.jpg" height="0" width="0"/></div>
+        <div id="merch3" class="shirtCont"><img src="/pictures/shirt.jpg" height="0" width="0"/></div>
+        <div id="merch4" class="shirtCont"><img src="/pictures/shirt.jpg" height="0" width="0"/></div>
+        <div id="merch5" class="shirtCont"><img src="/pictures/shirt.jpg" height="0" width="0"/></div>
+        <div id="merch6" class="shirtCont"><img src="/pictures/shirt.jpg" height="0" width="0"/></div>
+        <div id="shirtFloater"></div>
+    </div>
+    
+</div>
+<div id="info2">
+    <div id="info2Child">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vulputate odio diam, ac luctus tellus tincidunt ut.</div>
+</div>
+</div>
 
 
 
 
 <!--<script>NavBar()</script>-->
 </body>
+
+<footer>
+    <div id="socialMedia">
+        Social Media Links
+    </div>
+    <div id="contact">
+        <div id="email">
+                Contact@info.com
+        </div>
+        <div id="address">
+            0000 Contact Street<br>
+            00600 Helsinki Finland
+        </div>
+        
+    </div>
+</footer>
 
 </html>

@@ -1,43 +1,128 @@
-nav {
-
+html, body {
+    margin:0px;
+    width:97vw;
 }
 
-html {
+@media screen and (max-width:400px) {
+    html, body {
+        height:1200px
+    }
+}
+
+@media screen and (min-width:400px) {
+    html,body {
+        height:1300px;
+    }
+}
+
+@media screen and (min-width:600px) {
+    html,body {
+        height:1500px;
+    }
+}
+
+
+video {
+    border: 2px solid black;
+    margin-top:10px;
+}
+
+header>h1 {
+    color:white;
+    margin:auto;
+    width: 345px;
+    top:30%;
+    position: relative;
+    
+}
+
+#navbarParentActive{
+    height:50px;
+    position:relative;
     display:flex;
-    justify-content: center;
     flex-grow:1;
+    background-color:#93E5AB;
 }
 
+#navCont {
+    display:flex;
+    z-index: 1;
+    position:absolute;
+    width:100vw;
+}
 
+.ssButton {
+    height:50px;
+    width:25%;
+    display:flex;
+    align-items: center;
+}
+
+.ssButton>span {
+    text-align: center;
+    flex-grow:1
+}
+
+.ssButton:hover {
+    background-color:#6daf80; 
+}
 
 #navButton {
+    margin:5px;
+    width:40px;
+    height:40px;
+}
+
+#navButCont {
     width:50px;
     height:50px;
     top:0px;
     left:0px;
-    background: yellow;
-    background-image:url("/pictures/navbar.jpg");
+    background: #93E5AB;
+    
 }
 
 header {
-    background-image: url("/pictures/codingStock.jpg");
-    width:100%;
+    background-image: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url("/pictures/codingStock.jpg");
+    width:100vw;
     height:15rem;
     background-position: center;
-    background-position-y: 63%;
-    flex-grow:1;
-    justify-content: center;
+    background-position-y:63%;
+    background-position-x: 55%;
+    position: static;
+    z-index: 0;
 }
 
-header>h2 {
-    color:white;
-    margin:auto;
-    width:50%;
-    top:30%;
-    
+#merchParent {
+    background-color: #1C2541;
+    color:#C5EFF7;
     
 }
 
-body {
-    width:100%;
+footer {
+    background-color: #0B132B;
+    color:#C5EFF7;
+    
+}
+
+#info1 {
+    background-color: #3A506B;
+    color:#C5EFF7;
+    
+}
+
+#info2 {
+    background-color: #1C2541;
+    color:#C5EFF7;
+    
+}
+
+html {
+    background-color: #3EA599;
+}
+
+@media screen and (min-width:1000px) {
+header {
+    background-position-x: 75%;
+}
 }

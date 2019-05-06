@@ -1,0 +1,68 @@
+header {
+    margin-top: 0px;
+    float:top;
+}
+
+video {
+    float:right;
+    position: relative;
+}
+
+
+footer {
+    width:100%;
+}
+
+#info1 {
+    width:100%;
+}
+
+.shirtCont {
+    float:right
+}
+
+.shirtCont:nth-child(odd) {
+    float:left;
+}
+
+#shirtFloater {
+    clear:both;
+}
+
+#info2 {
+    width:100%;
+}
+
+#merchParent {
+    width:100%;
+    
+}
+
+#info1Child>span {
+    float:left;
+}
+
+#vidFloater {
+    clear:both;
+}
+
+#info1Child {
+    padding:20px;
+
+}
+
+#info2Child {
+    padding:20px;
+}
+
+#merchChild {
+    padding:20px;
+}
+
+#socialMedia {
+    padding:20px;
+}
+
+#contact {
+    padding:20px;
+}
