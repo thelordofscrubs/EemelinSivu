@@ -8,6 +8,8 @@ body {
     height: 100%;
 }
 
+
+
 a {
     text-decoration: none;
     color: blue;
@@ -20,6 +22,37 @@ top:0;
 width:100%;
 max-width:1000px;
 margin:auto;
+}
+
+#navBut {
+    position:absolute;
+    left:-99999px;
+}
+
+@media screen and (max-width:720px) {
+    #navbar {
+        position: absolute;
+        left:-99999px
+    }
+    #navBut {
+        background-color:rgb(92, 92, 92);
+        position:sticky;
+        top:0;
+        left:0;
+        height:50px;
+        width:50px;
+    }
+    #navBut a {
+        float: left;
+        text-align:center;
+        padding: 10px 20px;
+        margin-right: 0px;
+        color:white;
+    }
+    
+    #navBut a:hover{
+        background: black;
+    }
 }
 
 #navbar a {

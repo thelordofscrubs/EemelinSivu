@@ -1,0 +1,32 @@
+#container {
+    margin-top:50px;
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+jobCont {
+    height:25%;
+    width:15%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    margin:20px;
+    border:1px solid black;
+}
+
+html {
+    background-color: beige;
+}
+
+jobImg {
+    height:60%;
+    width:40%;
+    margin:10px;
+}
+
+jobDesc {
+    width: 80%;
+    height:30%;
+    margin:10px;
+}
