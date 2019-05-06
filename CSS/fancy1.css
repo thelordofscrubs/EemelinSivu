@@ -12,6 +12,10 @@ body {
     overflow-x:overlay;
 }
 
+#style1 {
+    background-color: #7eca94;
+}
+
 #vid {
     display:flex;
     margin-top:20px
