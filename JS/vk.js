@@ -25,6 +25,7 @@ function submitComment() {
     commentArray.push(new comment(commentContent, name, d.toString()));
     PushComment(commentArray[commentArray.length-1]);
     commentField.value = "";
+    displayComments();
 }
 
 function comment(content, name, time) {
