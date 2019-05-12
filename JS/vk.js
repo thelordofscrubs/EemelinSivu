@@ -78,7 +78,7 @@ function getComments() {
                 let timeStamp = xml.getElementsByTagName("timeStamp")[i].childNodes[0].nodeValue;
                 commentArray[i] = new comment(value, name, timeStamp);
             }
-            displayComments();
+            setTimeout(displayComments(),300);
         }   
     }
     xhr.open("GET", "/XML/vk.xml", true);
