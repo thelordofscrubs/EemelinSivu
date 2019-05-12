@@ -49,7 +49,7 @@ function PushComment(commentOb) {
         if (this.readyState == 4 && this.status == 200) {
             console.log("score sent to xml");
             console.log(this.responseText);
-            getComments();
+            //getComments();
         }
     }
     let jsoncomment = JSON.stringify(commentOb);
