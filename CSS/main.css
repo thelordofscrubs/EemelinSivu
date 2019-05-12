@@ -4,8 +4,8 @@ html{
 
 body {
     max-width: 1000px;
-    margin: auto;
-    height: 100%;
+    margin: 0px;
+    height: 100vh;
 }
 
 
@@ -29,7 +29,7 @@ margin:auto;
     left:-99999px;
 }
 
-@media screen and (max-width:767px) {
+/*@media screen and (max-width:767px) {
     #navbar {
         position: absolute;
         left:-99999px
@@ -64,7 +64,7 @@ margin:auto;
     #navBut1 a:hover{
         background: black;
     }
-}
+}*/
 
 #navbar a {
     float: left;
