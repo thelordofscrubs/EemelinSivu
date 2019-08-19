@@ -536,6 +536,15 @@ function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=3,var2 = .1) {
     }
 }
 
+function actualPerlin() {
+    let pointArray = [[0]]
+    for (let i = 0; i < 4; i++) {
+        for (let f = 0; f < 4; f++) {
+            pointArray[i][f] = 0;    
+        }
+    }
+    
+}
 
 //var noiseArray = createNoise(noiseLength);
 

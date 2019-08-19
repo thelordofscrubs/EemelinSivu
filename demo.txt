@@ -1,0 +1,52 @@
+var varNameHere = "string variable";
+print(varNameHere);
+array arrayNameHere = ["Item1",""Item2","Item3"];
+print(arrayNameHere);
+    //Output:
+    //Item Item2 Item3
+
+print(arraNameHere[0]);
+    //Output:
+    //Item1
+
+
+print(arraNameHere[1]);
+    //Output:
+    //Item2
+
+
+print(arraNameHere[2]);
+    //Output:
+    //Item3
+
+
+print(arraNameHere[3]);
+    //Output:
+    //
+
+object objectNameHere = {firstName = "John", lastName = "Smith", pay = 20, hoursWorked = 40};
+
+array employees = [{},{},{},{}];
+
+print(objectNameHere);
+    //Output:
+    //
+
+print(objectNameHere.firstName);
+    //Output:
+    //John
+
+function calculatePay(firstName) {
+    var temporaryObject = search(employees,firstName);
+    var weeksPay = temporaryObject.pay * temporaryObject.hoursWorked;
+    return weeksPay
+}
+
+calculatePay("John")
+
+
+function search(array, search_term) {
+
+
+return object
+}
