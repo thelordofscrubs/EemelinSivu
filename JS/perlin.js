@@ -1,5 +1,11 @@
 var noiseLength = 10000;
 var ctx;
+var vectorArray = [];
+for (let i = 0; i < 2; i++) {
+    for (let f = 0; f < 2; f++) {
+        vectorArray[i*3+f] = {x:i-1, y:f-1};
+    }
+}
 
 function createContext() {  
     let x = document.getElementById("canvasDiv");
@@ -540,10 +546,10 @@ function actualPerlin() {
     let pointArray = [[0]]
     for (let i = 0; i < 4; i++) {
         for (let f = 0; f < 4; f++) {
-            pointArray[i][f] = 0;    
+            pointArray[i][f] = vectorArray[Math.round(Math.random()*8)];    
         }
     }
-    
+
 }
 
 //var noiseArray = createNoise(noiseLength);
