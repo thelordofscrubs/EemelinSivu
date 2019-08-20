@@ -1,8 +1,8 @@
 var noiseLength = 10000;
 var ctx;
 var vectorArray = [];
-for (let i = 0; i < 2; i++) {
-    for (let f = 0; f < 2; f++) {
+for (let i = 0; i < 3; i++) {
+    for (let f = 0; f < 3; f++) {
         vectorArray[i*3+f] = {x:i-1, y:f-1};
     }
 }
@@ -501,7 +501,7 @@ function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=3,var2 = .1) {
+function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -522,6 +522,8 @@ function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=3,var2 = .1) {
             break;
         case 3:
             noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
+        case 4:
+            noiseToDisplay = actualPerlin();
     }
     for (let i = 0; i < blur2; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
@@ -543,13 +545,37 @@ function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=3,var2 = .1) {
 }
 
 function actualPerlin() {
-    let pointArray = [[0]]
-    for (let i = 0; i < 4; i++) {
-        for (let f = 0; f < 4; f++) {
-            pointArray[i][f] = vectorArray[Math.round(Math.random()*8)];    
+    let pointArray = [[],[],[],[],[],[]];
+    for (let i = 0; i < 6; i++) {
+        for (let f = 0; f < 6; f++) {
+            pointArray[i][f] = vectorArray[Math.floor(Math.random()*8)];
         }
     }
+    let corners = [], scordx, scordy, dist, values = [], dp = [];
+    for (let i = 0; i < 500; i++) {
+        values[i] = [];
+    }
+    for (let i = 0; i < 5; i++) {
+        for (let f = 0; f < 5; f++) {
+            corners = [pointArray[i][f+1],pointArray[i+1][f+1],pointArray[i+1][f],pointArray[i][f]];
+            for (let y = 0; y < 10; y++) {
+                for (let x = 0; x < 10; x++) {
+                    scordx = .05 + .1*x;
+                    scordy = .05 + .1*y;
+                    dist = [{x:scordx - 1,y:scordy - 0},{x:scordx - 1,y:scordy - 1},{x:scordx - 0,y:scordy - 1},{x:scordx - 0,y:scordy - 0}];
+                    for (i1 = 0; i1 < 4; i1++) {
+                        dp[i1] = (dist[i1].x+corners[i1].x)*(dist[i1].y+corners[i1].y);
+                    }
+                    let p1 = dp[0]*(10-y)/10+dp[1]*y/10;
+                    let p2 = dp[2]*y/10+dp[3]*(10-y)/10;
+                    let v = (p2*x/10+p1*(10-x)/10)+0.5;
+                    values[f*20+x][i*20+y] = v;//6*v^5-15*v^4+10*v^3;
 
+                }
+            }
+        }
+    }
+    return values;
 }
 
 //var noiseArray = createNoise(noiseLength);
