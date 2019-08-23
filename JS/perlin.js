@@ -523,7 +523,7 @@ function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
         case 3:
             noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
         case 4:
-            noiseToDisplay = actualPerlin();
+            noiseToDisplay = betterPerlin();
     }
     for (let i = 0; i < blur2; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
@@ -558,24 +558,43 @@ function actualPerlin() {
     for (let i = 0; i < 5; i++) {
         for (let f = 0; f < 5; f++) {
             corners = [pointArray[i][f+1],pointArray[i+1][f+1],pointArray[i+1][f],pointArray[i][f]];
-            for (let y = 0; y < 10; y++) {
-                for (let x = 0; x < 10; x++) {
-                    scordx = .05 + .1*x;
-                    scordy = .05 + .1*y;
+            for (let y = 0; y < 100; y++) {
+                for (let x = 0; x < 100; x++) {
+                    scordx = .005 + .01*x;
+                    scordy = .005 + .01*y;
                     dist = [{x:scordx - 1,y:scordy - 0},{x:scordx - 1,y:scordy - 1},{x:scordx - 0,y:scordy - 1},{x:scordx - 0,y:scordy - 0}];
                     for (i1 = 0; i1 < 4; i1++) {
-                        dp[i1] = (dist[i1].x+corners[i1].x)*(dist[i1].y+corners[i1].y);
+                        let tpv = (dist[i1].x+corners[i1].x)*(dist[i1].y+corners[i1].y);
+                        dp[i1] = tpv;
                     }
-                    let p1 = dp[0]*(10-y)/10+dp[1]*y/10;
-                    let p2 = dp[2]*y/10+dp[3]*(10-y)/10;
-                    let v = (p2*x/10+p1*(10-x)/10)+0.5;
-                    values[f*20+x][i*20+y] = v;//6*v^5-15*v^4+10*v^3;
+                    let p1 = (100-y)*dp[0]/100 + y*dp[1]/100;
+                    let p2 = (100-y)*dp[2]/100 + y*dp[3]/100;
+                    let v = (100-x)*p2/100 + x*p1/100;
+                        v = v*v*v*(v*(v*6-15)+10)
+                    values[f*100+x][i*100+y] = v;
 
                 }
             }
         }
     }
     return values;
+}
+
+function betterPerlin(xdim = 500, ydim = 500,freq = 10,amp = 1) {
+    xdim -= xdim%freq;
+    ydim -= ydim%freq;
+    let valueTable = [];
+    for (let i = 0; i < ydim;i++) {
+        valueTable[i] = new Array(xdim);
+    }
+    let cornerArray = [];
+    for (let i = 0; i < ydim/freq+1;i++) {
+        cornerArray[i] = new Array(xdim/freq+1);
+        for (let f = 0; f < xdim/freq+1;f++) {
+            cornerArray[i][f] = vectorArray[Math.floor(Math.random()*8)]
+        }
+    }
+
 }
 
 //var noiseArray = createNoise(noiseLength);
