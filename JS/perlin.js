@@ -619,6 +619,16 @@ function actualPerlin() {
     return values;
 }
 
+function layeredPerlin(sizeX = 500, sizeY = 500, layers = 3, persistence = 2) {
+    let startFreq = Math.min(sizeX,sizeY)/2;
+    let layersOfPerlin = betterPerlin(sizeX, sizeY, startFreq);
+    for (let i = 0; i < layers-1; i++) {
+        let newLayer = betterPerlin(sizeX, sizeY, );
+    }
+
+    return layersOfPerlin;
+}
+
 function betterPerlin(xdim = 500, ydim = 500,freq = 50,amp = 1) {
     if (xdim%freq) {
         xdim += freq - xdim%freq;
