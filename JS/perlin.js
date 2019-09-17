@@ -620,8 +620,12 @@ function actualPerlin() {
 }
 
 function betterPerlin(xdim = 500, ydim = 500,freq = 50,amp = 1) {
-    xdim += freq - xdim%freq;
-    ydim += freq - ydim%freq;
+    if (xdim%freq) {
+        xdim += freq - xdim%freq;
+    }
+    if (ydim%freq) {
+        ydim += freq - ydim%freq;
+    }
     let numCellX = xdim/freq;
     let numCellY = ydim/freq;
     let valueTable = [];
@@ -641,24 +645,24 @@ function betterPerlin(xdim = 500, ydim = 500,freq = 50,amp = 1) {
     let c1, c2, c3, c4, dv1, dv2, dv3, dv4, inX, inY, dp1, dp2, dp3, dp4, l1, l2;
     for (let yCordBig = 0; yCordBig < numCellY; yCordBig++) {
         for (let xCordBig = 0; xCordBig < numCellX; xCordBig++) {
-            c1 = cornerArray[xCordBig][yCordBig];
-            c2 = cornerArray[xCordBig+1][yCordBig];
-            c3 = cornerArray[xCordBig+1][yCordBig+1];
-            c4 = cornerArray[xCordBig][yCordBig+1];
+            c1 = cornerArray[yCordBig][xCordBig];
+            c2 = cornerArray[yCordBig][xCordBig+1];
+            c3 = cornerArray[yCordBig+1][xCordBig+1];
+            c4 = cornerArray[yCordBig+1][xCordBig];
             for (let i = 0; i < freq; i++) {
                 for (let f = 0 ; f < freq; f++) {
-                    inX = f/freq + .5/freq; 
-                    inY = i/freq + .5/freq;
+                    inX = f/freq + 1/freq/2;
+                    inY = i/freq + 1/freq/2;
                     dv1 = {x:inX-0, y:inY-0};
                     dv2 = {x:inX-1, y:inY-0};
                     dv3 = {x:inX-1, y:inY-1};
                     dv4 = {x:inX-0, y:inY-1};
-                    dp1 = dv1.x*c1.x + dv1.y*c1.y;
-                    dp2 = dv2.x*c2.x + dv2.y*c2.y;
-                    dp3 = dv3.x*c3.x + dv3.y*c3.y;
-                    dp4 = dv4.x*c4.x + dv4.y*c4.y;
+                    dp1 = ((dv1.x*c1.x + dv1.y*c1.y)+1)/2;
+                    dp2 = ((dv2.x*c2.x + dv2.y*c2.y)+1)/2;
+                    dp3 = ((dv3.x*c3.x + dv3.y*c3.y)+1)/2;
+                    dp4 = ((dv4.x*c4.x + dv4.y*c4.y)+1)/2;
                     l1 = lerp(dp1, dp2, smooth(inX));
-                    l2 = lerp(dp3, dp4, smooth(inX));
+                    l2 = lerp(dp4, dp3, smooth(inX));
                     valueTable[yCordBig*freq+i][xCordBig*freq+f] = lerp(l1,l2, smooth(inY))*amp;
 
                 }
@@ -804,7 +808,7 @@ function displayNoise(variance=.15,blur,xCord=0) {
 //}
 
 var pos = 0
-window.addEventListener("keydown", direction);
+//window.addEventListener("keydown", direction);
 function direction (e) {
     var x = e.keyCode;
     switch(x) {
