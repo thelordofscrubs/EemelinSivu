@@ -583,6 +583,8 @@ function actualPerlin() {
 function betterPerlin(xdim = 500, ydim = 500,freq = 10,amp = 1) {
     xdim -= xdim%freq;
     ydim -= ydim%freq;
+    let cellDensityx = xdim/freq;
+    let cellDensityy = ydim/freq;
     let valueTable = [];
     for (let i = 0; i < ydim;i++) {
         valueTable[i] = new Array(xdim);
@@ -591,10 +593,24 @@ function betterPerlin(xdim = 500, ydim = 500,freq = 10,amp = 1) {
     for (let i = 0; i < ydim/freq+1;i++) {
         cornerArray[i] = new Array(xdim/freq+1);
         for (let f = 0; f < xdim/freq+1;f++) {
-            cornerArray[i][f] = vectorArray[Math.floor(Math.random()*8)]
+            cornerArray[i][f] = vectorArray[Math.floor(Math.random()*8)];
         }
     }
+    let c1, c2, c3, c4;
+    
 
+
+}
+
+function smooth(value) {
+    //smooth a value between 1 and 0
+    return value*value*value*(value*(value*6-15)+10);
+}
+
+function lerp(v1, v2, pos) {
+//v1 and v2 are the values to be interpolated
+//pos is the position along the line between the two values, <0-1>
+    return (v1+ pos*(v2-v1));
 }
 
 //var noiseArray = createNoise(noiseLength);
