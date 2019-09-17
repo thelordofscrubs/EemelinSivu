@@ -4,6 +4,19 @@ var vectorArray = [];
 for (let i = 0; i < 3; i++) {
     for (let f = 0; f < 3; f++) {
         vectorArray[i*3+f] = {x:i-1, y:f-1};
+        /*if (vectorArray[i*3+f].x == -1) {
+            vectorArray[i*3+f].x = -Math.sqrt(2)/2;
+        }
+        if (vectorArray[i*3+f].x == 1) {
+            vectorArray[i*3+f].x = Math.sqrt(2)/2;
+        }
+        
+        if (vectorArray[i*3+f].y == -1) {
+            vectorArray[i*3+f].y = -Math.sqrt(2)/2;
+        }
+        if (vectorArray[i*3+f].y == 1) {
+            vectorArray[i*3+f].y = Math.sqrt(2)/2;
+        }*/
     }
 }
 
@@ -501,7 +514,7 @@ function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
+function displayTwoDNoise(freq =50,blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -523,7 +536,7 @@ function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
         case 3:
             noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
         case 4:
-            noiseToDisplay = betterPerlin();
+            noiseToDisplay = betterPerlin(500,500, freq);
     }
     for (let i = 0; i < blur2; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
@@ -543,6 +556,32 @@ function displayTwoDNoise(blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
         }
     }
 }
+
+function displayPointBox(noiseToDisplay) {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
+    }
+    ctx.strokeStyle = "#FFFFFF";
+    for (let i = 0; i < 500; i++) {
+        for (let f = 0; f < 500; f++) {
+            let colorString = "#";
+            let lv = Math.round(noiseToDisplay[i][f]*100).toString(16)
+            if (lv.length == 1) {
+                lv = "0".concat(lv);
+            }
+            colorString = colorString.concat(lv);
+            colorString = colorString.concat(lv);
+            colorString = colorString.concat(lv);
+            ctx.fillStyle = colorString;
+            ctx.fillRect(f,i,1,1);            
+        }
+    }
+}
+
 
 function actualPerlin() {
     let pointArray = [[],[],[],[],[],[]];
@@ -580,26 +619,132 @@ function actualPerlin() {
     return values;
 }
 
-function betterPerlin(xdim = 500, ydim = 500,freq = 10,amp = 1) {
-    xdim -= xdim%freq;
-    ydim -= ydim%freq;
-    let cellDensityx = xdim/freq;
-    let cellDensityy = ydim/freq;
+function betterPerlin(xdim = 500, ydim = 500,freq = 50,amp = 1) {
+    xdim += freq - xdim%freq;
+    ydim += freq - ydim%freq;
+    let numCellX = xdim/freq;
+    let numCellY = ydim/freq;
     let valueTable = [];
     for (let i = 0; i < ydim;i++) {
         valueTable[i] = new Array(xdim);
+        for (let f = 0; f < xdim; f++) {
+            valueTable[i][f] = 0;
+        }
     }
     let cornerArray = [];
-    for (let i = 0; i < ydim/freq+1;i++) {
-        cornerArray[i] = new Array(xdim/freq+1);
-        for (let f = 0; f < xdim/freq+1;f++) {
+    for (let i = 0; i < numCellY+1;i++) {
+        cornerArray[i] = new Array(numCellX+1);
+        for (let f = 0; f < numCellX+1;f++) {
             cornerArray[i][f] = vectorArray[Math.floor(Math.random()*8)];
         }
     }
-    let c1, c2, c3, c4;
-    
+    let c1, c2, c3, c4, dv1, dv2, dv3, dv4, inX, inY, dp1, dp2, dp3, dp4, l1, l2;
+    for (let yCordBig = 0; yCordBig < numCellY; yCordBig++) {
+        for (let xCordBig = 0; xCordBig < numCellX; xCordBig++) {
+            c1 = cornerArray[xCordBig][yCordBig];
+            c2 = cornerArray[xCordBig+1][yCordBig];
+            c3 = cornerArray[xCordBig+1][yCordBig+1];
+            c4 = cornerArray[xCordBig][yCordBig+1];
+            for (let i = 0; i < freq; i++) {
+                for (let f = 0 ; f < freq; f++) {
+                    inX = f/freq + .5/freq; 
+                    inY = i/freq + .5/freq;
+                    dv1 = {x:inX-0, y:inY-0};
+                    dv2 = {x:inX-1, y:inY-0};
+                    dv3 = {x:inX-1, y:inY-1};
+                    dv4 = {x:inX-0, y:inY-1};
+                    dp1 = dv1.x*c1.x + dv1.y*c1.y;
+                    dp2 = dv2.x*c2.x + dv2.y*c2.y;
+                    dp3 = dv3.x*c3.x + dv3.y*c3.y;
+                    dp4 = dv4.x*c4.x + dv4.y*c4.y;
+                    l1 = lerp(dp1, dp2, smooth(inX));
+                    l2 = lerp(dp3, dp4, smooth(inX));
+                    valueTable[yCordBig*freq+i][xCordBig*freq+f] = lerp(l1,l2, smooth(inY))*amp;
 
+                }
+            }
+        }
+    }
+    return valueTable;
+}
 
+function stepPerlin(xdim = 500, ydim = 500,freq = 50,amp = 1) {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
+    }
+    ctx.strokeStyle = "#FFFFFF";
+    xdim += freq - xdim%freq;
+    ydim += freq - ydim%freq;
+    let numCellX = xdim/freq;
+    let numCellY = ydim/freq;
+    let valueTable = [];
+    for (let i = 0; i < ydim;i++) {
+        valueTable[i] = new Array(xdim);
+        for (let f = 0; f < xdim; f++) {
+            valueTable[i][f] = 0;
+        }
+    }
+    let cornerArray = [];
+    for (let i = 0; i < numCellY+1;i++) {
+        cornerArray[i] = new Array(numCellX+1);
+        for (let f = 0; f < numCellX+1;f++) {
+            cornerArray[i][f] = vectorArray[Math.floor(Math.random()*8)];
+        }
+    }
+    let c1, c2, c3, c4, dv1, dv2, dv3, dv4, inX, inY, dp1, dp2, dp3, dp4, l1, l2;
+    for (let yCordBig = 0; yCordBig < numCellY; yCordBig++) {
+        for (let xCordBig = 0; xCordBig < numCellX; xCordBig++) {
+            c1 = cornerArray[xCordBig][yCordBig];
+            c2 = cornerArray[xCordBig+1][yCordBig];
+            c3 = cornerArray[xCordBig+1][yCordBig+1];
+            c4 = cornerArray[xCordBig][yCordBig+1];
+            for (let i = 0; i < freq; i++) {
+                for (let f = 0 ; f < freq; f++) {
+                    inX = f/freq + .5/freq; 
+                    inY = i/freq + .5/freq;
+                    dv1 = {x:inX-0, y:inY-0};
+                    dv2 = {x:inX-1, y:inY-0};
+                    dv3 = {x:inX-1, y:inY-1};
+                    dv4 = {x:inX-0, y:inY-1};
+                    dp1 = dv1.x*c1.x + dv1.y*c1.y;
+                    dp2 = dv2.x*c2.x + dv2.y*c2.y;
+                    dp3 = dv3.x*c3.x + dv3.y*c3.y;
+                    dp4 = dv4.x*c4.x + dv4.y*c4.y;
+                    l1 = lerp(dp1, dp2, smooth(inX));
+                    l2 = lerp(dp3, dp4, smooth(inX));
+                    //valueTable[yCordBig*freq+i][xCordBig*freq+f] = lerp(l1,l2, smooth(inY))*amp;
+                    let colorString = "#";
+                    let lv = Math.round(lerp(l1,l2, smooth(inY))*amp*100).toString(16)
+                    if (lv.length == 1) {
+                        lv = "0".concat(lv);
+                    }
+                    colorString = colorString.concat(lv);
+                    colorString = colorString.concat(lv);
+                    colorString = colorString.concat(lv);
+                    ctx.fillStyle = colorString;
+                    ctx.fillRect(yCordBig*freq+i,xCordBig*freq+f,1,1); 
+                }  
+            }
+        }
+    }
+    /*let yCordBig = 0, xCordBig = 0;
+    let yCB = setInterval(function() {
+        if (yCordBig == numCellY) {
+            clearInterval(yCB);
+        }
+        let xCB = setInterval(function() {
+            if (xCordBig == numCellX) {
+                clearInterval(xCB);
+            }
+
+            xCordBig += 1;
+        }, 5);
+        yCordBig += 1;
+    }, 10);*/
 }
 
 function smooth(value) {
