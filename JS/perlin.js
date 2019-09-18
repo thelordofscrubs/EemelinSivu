@@ -514,7 +514,7 @@ function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(freq =50,blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 = .1) {
+function displayTwoDNoise(freq =50, layers = 3, blur2 = 2,blur1 = 100, var1 = .15,fun=5,var2 = .1) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -537,6 +537,8 @@ function displayTwoDNoise(freq =50,blur2 = 2,blur1 = 100, var1 = .15,fun=4,var2 
             noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
         case 4:
             noiseToDisplay = betterPerlin(500,500, freq);
+        case 5:
+            noiseToDisplay = layeredPerlin(500,500,layers);
     }
     for (let i = 0; i < blur2; i++) {
         noiseToDisplay = blurTwoD(noiseToDisplay);
@@ -620,12 +622,18 @@ function actualPerlin() {
 }
 
 function layeredPerlin(sizeX = 500, sizeY = 500, layers = 3, persistence = 2) {
-    let startFreq = Math.min(sizeX,sizeY)/2;
+    let startFreq = Math.round(Math.min(sizeX,sizeY)/2);
     let layersOfPerlin = betterPerlin(sizeX, sizeY, startFreq);
     for (let i = 0; i < layers-1; i++) {
-        let newLayer = betterPerlin(sizeX, sizeY, );
+        let amp = 1/(2^i+1);
+        let newLayer = betterPerlin(sizeX, sizeY, Math.round(startFreq/(persistence^i+1)), amp);
+        for (let i = 0; i < layersOfPerlin.length; i++) {
+            for (let f = 0; f< layersOfPerlin[0].length; f++) {
+                newLayer[i][f] -= amp/2;
+                layersOfPerlin[i][f] += newLayer[i][f];
+            }
+        }
     }
-
     return layersOfPerlin;
 }
 
