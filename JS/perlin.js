@@ -1,6 +1,7 @@
 var noiseLength = 10000;
 var ctx;
 var vectorArray = [];
+//Create the 3x3 array of unit vectors
 for (let i = 0; i < 3; i++) {
     for (let f = 0; f < 3; f++) {
         vectorArray[i*3+f] = {x:i-1, y:f-1};
@@ -17,6 +18,15 @@ for (let i = 0; i < 3; i++) {
         if (vectorArray[i*3+f].y == 1) {
             vectorArray[i*3+f].y = Math.sqrt(2)/2;
         }*/
+    }
+}
+
+var vectorArray3d = [];
+for (let i = 0; i < 3; i++) {
+    for (let f = 0; f < 3; f++) {
+        for (let c = 0; c < 3; c++) {
+            vectorArray2[vectorArray2.length] = {x:i-1, y:f-1, z:c-1};
+        }
     }
 }
 
@@ -305,7 +315,7 @@ for (let i = 0 ; i < 10 ; i++) {
 }
 */
 
-function animateShape2(length=10, blur1=100, blur2 = 5) {
+function animateShape2(length=10) {
     //let ms = length*1000;
     let frames = length*40;
     if (!document.getElementById("canvasElement")) {
@@ -323,16 +333,23 @@ function animateShape2(length=10, blur1=100, blur2 = 5) {
     ctx.strokeStyle = "#FFFFFF";
     let pi = Math.PI;
     let pi2 = Math.PI*2;
-    console.log("\nframes: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2);
-    let tdn = twoDNoise3(frames*2,500, blur1);
+    //console.log("\nframes: "+frames+"\nblur1 is "+blur1+"\nblur2 is "+blur2);
+    //let tdn = twoDNoise3(frames*2,500, blur1);
+    let tdn = layeredPerlin(frames*2, 500, 5);
+    for (let array of tdn) {
+        for (let point of array) {
+            point *= 1000;
+        }
+    }
     console.log("\nnoise field has been created");
-    for (let i = 0 ; i < blur2; i++) {
+    /*for (let i = 0 ; i < blur2; i++) {
         tdn = blurTwoD(tdn);
     }
     console.log("\nnoise has been blurred\n");
-    frameCounter = 0;
+    */frameCounter = 0;
     var timer = setInterval(function() {
         let nc2 = 250 + Math.round(Math.sin(frameCounter/30)*50);
+        //let nc2 = 250
         let nc3 = 350 + Math.round((Math.cos(frameCounter/frames*pi2)*(-1)+1)*frames/3);
         let oneDSlice = [];
         oneDSlice.length = 0;
@@ -344,7 +361,7 @@ function animateShape2(length=10, blur1=100, blur2 = 5) {
         ctx.clearRect(0,0,500,500);
         ctx.beginPath();
         for (let i = 0 ; i < 500;i++) {
-            ctx.arc(250,250,100+oneDSlice[i]*20,((pi2*i)/500),(i+1)*pi2/500);
+            ctx.arc(250,250,100+oneDSlice[i]*100,((pi2*i)/500),(i+1)*pi2/500);
         }
         ctx.closePath();
         ctx.stroke();
@@ -514,7 +531,7 @@ function stopAnimation() {
     clearInterval(window.timer);
 }
 
-function displayTwoDNoise(freq =50, layers = 3, blur2 = 2,blur1 = 100, var1 = .15,fun=5,var2 = .1) {
+function displayTwoDNoise(fun=5,freq =50, layers = 3, blur2 = 2,blur1 = 100, var1 = .15,var2 = .1) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -535,14 +552,17 @@ function displayTwoDNoise(freq =50, layers = 3, blur2 = 2,blur1 = 100, var1 = .1
             break;
         case 3:
             noiseToDisplay = twoDNoise3(500,500,blur1,var1,var2);
+            break;
         case 4:
             noiseToDisplay = betterPerlin(500,500, freq);
+            break;
         case 5:
             noiseToDisplay = layeredPerlin(500,500,layers);
+            break;
     }
-    for (let i = 0; i < blur2; i++) {
-        noiseToDisplay = blurTwoD(noiseToDisplay);
-    }
+    //for (let i = 0; i < blur2; i++) {
+    //    noiseToDisplay = blurTwoD(noiseToDisplay);
+    //}
     for (let i = 0; i < 500; i++) {
         for (let f = 0; f < 500; f++) {
             let colorString = "#";
@@ -584,6 +604,87 @@ function displayPointBox(noiseToDisplay) {
     }
 }
 
+function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
+    //increase the dimensions if they do not fit into the given cell amount
+    //extra will simply be cut later
+    if (xdim%cells != 0) {
+        xdim += (cells - xdim%cells);
+    }
+    if (ydim%cells != 0) {
+        ydim += (cells - ydim%cells);
+    }
+    if (zdim%Math.min(xdim, ydim) != 0) {
+        zdim += (Math.min(xdim, ydim) - zdim%Math.min(xdim, ydim));
+    }
+    //pointDensity is the amount of points per side of each 3d cubic cell
+    let pointDensity = Math.min(xdim, ydim, zdim) / cells;
+    //size of the cell coordinate grid
+    let bigCoords = {x: xdim/pointDensity, y: ydim/pointDensity, z: zdim/pointDensity};
+    //initialize 3 dimensional array
+    let finalArray = new Array(ydim);
+    for (let yar of finalArray) {
+        yar = new Array(xdim); 
+        for (let xar of yar) {
+            xar = new Array(zdim);
+            for (let point of xar) {
+                point = 0.5;
+            }
+        }
+    }
+    //create the gradient array
+    let gradientArray = new Array(bigCoords.y+1);
+    for (let yar of gadientArray) {
+        yar = new Array(bigCoords.x+1);
+        for (let xar of yar) {
+            xar = new Array(bigCoords.z+1);
+            for (let vector of xar) {
+                //add a random gradient vector to each gradient point in the 3D array
+                vector = vectorArray3d[Math.floor(Math.random()*vectorArray3d.length)];
+            }
+        }
+    }
+    let cornerArray = [], inX, inY, inZ, distanceArray = [];
+    //first iterate through each 'cell', and iterate through each point in each cell seperately
+    for (let bigY = 0; bigY < bigCoords.y; bigY++) {
+        for (let bigX = 0; bigX < bigCoords.x; bigX++) {
+            for (let bigZ = 0; bigZ < bigCoords.z; bigZ++) {
+                //find the 8 corners of the current cell
+                cornerArray = [];
+                cornerArray.length = 0;
+                for (let i = 0; i < 2; i++) {
+                    for (let f = 0; f < 2; f++) {
+                        for (let c = 0; c < 2; c++) {
+                            //every possible combination of current coordinates and current coordinates + 1 using the for loops to make 2x2x2=8 selections
+                            cornerArray[cornerArray.length] = gradientArray[bigY+i][bigX+f][bigZ+c];
+                        }
+                    }
+                }
+                //iterate through each point in the cell
+                for (let y = 0; y < pointDensity; y++) {
+                    for (let x = 0; x < pointDensity; x++) {
+                        for (let z = 0; z < pointDensity; z++) {
+                            //for each point, find in-cell coordinated for distance vectors
+                            inY = (y+.5)/pointDensity;
+                            inX = (x+.5)/pointDensity;
+                            inZ = (z+.5)/pointDensity;
+                            for (let i = 0; i < 2; i++) {
+                                for (let f = 0; f < 2; f++) {
+                                    for (let c = 0; c < 2; c++) {
+                                        //every possible combination of current coordinates and current coordinates + 1 using the for loops to make 2x2x2=8 selections
+                                        distanceArray[distanceArray.length] = {y:inY-i, x:inX-f, z:inZ-c};
+                                    }
+                                }
+                            }
+                            
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return finalArray;
+}
 
 function actualPerlin() {
     let pointArray = [[],[],[],[],[],[]];
@@ -625,8 +726,8 @@ function layeredPerlin(sizeX = 500, sizeY = 500, layers = 3, persistence = 2) {
     let startFreq = Math.round(Math.min(sizeX,sizeY)/2);
     let layersOfPerlin = betterPerlin(sizeX, sizeY, startFreq);
     for (let i = 0; i < layers-1; i++) {
-        let amp = 1/(2^i+1);
-        let newLayer = betterPerlin(sizeX, sizeY, Math.round(startFreq/(persistence^i+1)), amp);
+        let amp = 1/(2**(i+2));
+        let newLayer = betterPerlin(sizeX, sizeY, Math.round(startFreq/(persistence**(i+1))), amp);
         for (let i = 0; i < layersOfPerlin.length; i++) {
             for (let f = 0; f< layersOfPerlin[0].length; f++) {
                 newLayer[i][f] -= amp/2;
