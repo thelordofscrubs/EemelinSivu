@@ -679,13 +679,13 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
                             for (let i = 0; i < distanceArray.length ; i++) {
                                 dpArray[i] = distanceArray[i].x * cornerArray[i].x + distanceArray[i].y * cornerArray[i].y + distanceArray[i].z * cornerArray[i].z;
                             }
-                            lerpresults[0] = lerp(dpArray[0],dpArray[1]);
-                            lerpresults[1] = lerp(dpArray[2],dparray[3]);
-                            lerpresults[2] = lerp(lerpresults[0],lerpresults[1]);
-                            lerpresults[3] = lerp(dpArray[2],dparray[3]);
-                            lerpresults[4] = lerp(dpArray[2],dparray[3]);
-                            lerpresults[5] = lerp(dpArray[2],dparray[3]);
-                            lerpresults[6] = lerp(dpArray[2],dparray[3]);
+                            lerpresults[0] = lerp(dpArray[0],dpArray[1],inZ);
+                            lerpresults[1] = lerp(dpArray[2],dparray[3],inZ);
+                            lerpresults[2] = lerp(lerpresults[0],lerpresults[1],inX);
+                            lerpresults[3] = lerp(dpArray[4],dparray[5],inZ);
+                            lerpresults[4] = lerp(dpArray[6],dparray[7],inZ);
+                            lerpresults[5] = lerp(lerpresults[3],lerpresults[4],inX);
+                            finalresult = lerp(lerpresults[2],lerpresults[5],inY);
                         }
                     }
                 }
