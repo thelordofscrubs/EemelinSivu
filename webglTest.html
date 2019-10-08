@@ -5,6 +5,7 @@
     <title></title>
     <link rel="stylesheet", type="text/css", href="/CSS/main.css"/>
     <script src="/JS/Navbar.js"></script>
+    <script src="/JS/webglTest.js"></script>
 </head>
 <body>
 <div class="navbar" id="navbar">        
@@ -22,7 +23,9 @@
         console.log("started main")
         const canvas = document.querySelector("#canvas1");
         const gl = canvas.getContext("webgl");
-        console.log(gl);
+        //console.log(gl);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0)
+        gl.clear(gl.COLOR_BUFFER_BIT)
     }
     function keypressed(e) {
         //console.log("keyboard event object: ");
