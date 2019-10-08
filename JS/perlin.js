@@ -643,7 +643,7 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
             }
         }
     }
-    let cornerArray = [], inX, inY, inZ, distanceArray = [];
+    let cornerArray = [], inX, inY, inZ, distanceArray = [], dpArray = [], lerpresults = [];
     //first iterate through each 'cell', and iterate through each point in each cell seperately
     for (let bigY = 0; bigY < bigCoords.y; bigY++) {
         for (let bigX = 0; bigX < bigCoords.x; bigX++) {
@@ -667,6 +667,7 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
                             inY = (y+.5)/pointDensity;
                             inX = (x+.5)/pointDensity;
                             inZ = (z+.5)/pointDensity;
+                            distanceArray = [];
                             for (let i = 0; i < 2; i++) {
                                 for (let f = 0; f < 2; f++) {
                                     for (let c = 0; c < 2; c++) {
@@ -675,8 +676,16 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
                                     }
                                 }
                             }
-                            
-
+                            for (let i = 0; i < distanceArray.length ; i++) {
+                                dpArray[i] = distanceArray[i].x * cornerArray[i].x + distanceArray[i].y * cornerArray[i].y + distanceArray[i].z * cornerArray[i].z;
+                            }
+                            lerpresults[0] = lerp(dpArray[0],dpArray[1]);
+                            lerpresults[1] = lerp(dpArray[2],dparray[3]);
+                            lerpresults[2] = lerp(lerpresults[0],lerpresults[1]);
+                            lerpresults[3] = lerp(dpArray[2],dparray[3]);
+                            lerpresults[4] = lerp(dpArray[2],dparray[3]);
+                            lerpresults[5] = lerp(dpArray[2],dparray[3]);
+                            lerpresults[6] = lerp(dpArray[2],dparray[3]);
                         }
                     }
                 }
