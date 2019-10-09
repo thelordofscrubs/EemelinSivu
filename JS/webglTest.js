@@ -14,7 +14,7 @@ var vertexShaderText = [
 'void main()',
 '{',
 'fragColor = vertColor;',
-'gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);',
+'gl_Position = mProj * mView * mWorld *vec4(vertPosition, 1.0);',
 //mProj * mView * mWorld * 
 '}'
 ].join('\n');
@@ -68,9 +68,9 @@ function main() {
 
     var triangleVertices = [
     //X , Y, Z  R, G, B
-    0.0, 0.5, 0.0,  1.0, 1.0, 0.0,
-    -0.5, -0.5, 0.0, 0.7, 0.0, 0.9,
-    0.5, -0.5, 0.0,  0.3, 0.5, 0.9
+    0.0, 0.5, 0.0,  1.0, 0.2, 0.0,
+    -0.5, -0.5, 0.0, 0.7, 0.9, 0.9,
+    0.5, -0.5, 0.0,  0.3, 0.5, 0.0
     ];
 
     var triangleVertexBufferOb = gl.createBuffer();
@@ -103,25 +103,38 @@ function main() {
 
     var matWorldUniformLocation = gl.getUniformLocation(program, "mWorld");
     var matViewUniformLocation = gl.getUniformLocation(program, "mView");
-    var matProjUniformLocation = gl.getUniformLocation(program, "mWProj");
+    var matProjUniformLocation = gl.getUniformLocation(program, "mProj");
 
     var projMatrix = new Float32Array(16);
     var viewMatrix = new Float32Array(16);
     var worldMatrix = new Float32Array(16);
 
     glMatrix.mat4.identity(worldMatrix);
-    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0,0,0], [0,1,0]);
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -4], [0,0,0], [0,1,0]);
     glMatrix.mat4.perspective(projMatrix,glMatrix.glMatrix.toRadian(45),canvas.width/canvas.height,0.1,1000.0);
 
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
     gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
     gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
 
-
-
     //main render loop
 
-    gl.useProgram(program);
+        var angle = 0;
+        var identityMatrix = new Float32Array(16);
+        glMatrix.mat4.identity(identityMatrix);
+
+        function loop() {
+            angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+            glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [0, 1, 0]);
+            gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 3);        
+            requestAnimationFrame(loop);
+
+        }
+        requestAnimationFrame(loop);
+
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 function keypressed(e) {
