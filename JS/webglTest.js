@@ -66,12 +66,26 @@ function main() {
         console.error("ERROR validating", gl.getProgramInfoLog(program));
     }
 
-    var triangleVertices = [
+    /*var triangleVertices = [
     //X , Y, Z  R, G, B
     0.0, 0.5, 0.0,  1.0, 0.2, 0.0,
     -0.5, -0.5, 0.0, 0.7, 0.9, 0.9,
     0.5, -0.5, 0.0,  0.3, 0.5, 0.0
-    ];
+    ];*/
+
+    var boxVertices = [
+        //X , Y, Z, R, G, B
+        //top
+        -1.0, 1.0, -1.0, 0.5, 0.5, 0.5,
+        -1.0, 1.0, 1.0 , 0.5, 0.5, 0.5,
+        1.0, 1.0 , 1.0 , 0.5, 0.5, 0.5,
+        1.0, 1.0, -1.0 , 0.5, 0.5, 0.5,   
+        //left
+        -1.0, 1.0, 1.0 , 0.5, 0.5, 0.5,
+        -1.0, -1.0, 1.0, 0.5, 0.5, 0.5,
+        -1.0, -1.0, -1.0,0.5, 0.5, 0.5,
+
+    ]
 
     var triangleVertexBufferOb = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferOb);
