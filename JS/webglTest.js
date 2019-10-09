@@ -14,7 +14,7 @@ var vertexShaderText = [
 'void main()',
 '{',
 'fragColor = vertColor;',
-'gl_Position = vec4(vertPosition, 1.0);',
+'gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);',
 //mProj * mView * mWorld * 
 '}'
 ].join('\n');
@@ -109,9 +109,9 @@ function main() {
     var viewMatrix = new Float32Array(16);
     var worldMatrix = new Float32Array(16);
 
-    mat4.identity(worldMatrix);
-    mat4.identity(viewMatrix);
-    mat4.identity(projMatrix);
+    glMatrix.mat4.identity(worldMatrix);
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0,0,0], [0,1,0]);
+    glMatrix.mat4.perspective(projMatrix,glMatrix.glMatrix.toRadian(45),canvas.width/canvas.height,0.1,1000.0);
 
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
     gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
@@ -134,5 +134,5 @@ function keypressed(e) {
     }
    
 }
-//window.addEventListener("keyup", keypressed)
+//window.addEventListener("keyup", keypressed);
 //window.addEventListener("keydown", keypressed);
