@@ -66,12 +66,12 @@ function main() {
         console.error("ERROR validating", gl.getProgramInfoLog(program));
     }
 
-    /*var triangleVertices = [
+    var triangleVertices = [
     //X , Y, Z  R, G, B
-    0.0, 0.5, 0.0,  1.0, 0.2, 0.0,
-    -0.5, -0.5, 0.0, 0.7, 0.9, 0.9,
-    0.5, -0.5, 0.0,  0.3, 0.5, 0.0
-    ];*/
+    0.0, 0.5, 0.0,  Math.random(), Math.random(), Math.random(),
+    -0.5, -0.5, 0.0, Math.random(), Math.random(), Math.random(),
+    0.5, -0.5, 0.0,  Math.random(), Math.random(), Math.random()
+    ];
 
     var boxVertices = [
         //X , Y, Z, R, G, B
@@ -86,10 +86,11 @@ function main() {
         -1.0, -1.0, -1.0,0.5, 0.5, 0.5,
 
     ]
+    var triangleVertices32 = new Float32Array(triangleVertices);
 
     var triangleVertexBufferOb = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferOb);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, triangleVertices32, gl.DYNAMIC_DRAW);
 
     var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
     var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
@@ -136,9 +137,48 @@ function main() {
         var angle = 0;
         var identityMatrix = new Float32Array(16);
         glMatrix.mat4.identity(identityMatrix);
+        var incdec = [];
+        for (let i = 0; i < 9; i++) {
+            incdec[i] = Math.random() >= 0.5;
+        }
+        let si = 0;
 
         function loop() {
-            angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+            triangleVertices32[3] = triangleVertices32[3] + .001;
+            if (triangleVertices32[3] > 1) {
+                triangleVertices32[3] = 0;
+            }
+            si = 0
+            for (let i = 0; i < 18; i++) {
+                if (![3,4,5,9,10,11,15,16,17].includes(i)) {
+                    continue;
+                }
+                switch (incdec[si]) {
+                    case false:
+                            triangleVertices32[i] -= .005;
+                            if (triangleVertices32[i] <= 0.2    ) {
+                                incdec[si] = true;
+                            }
+                            break;
+                    case true:
+                            triangleVertices32[i] += .005;
+                            if (triangleVertices32[i] >= 0.98) {
+                                incdec[si] = false;
+                            }
+                }
+                si++;
+            }
+            gl.bufferData(gl.ARRAY_BUFFER, triangleVertices32, gl.DYNAMIC_DRAW);
+            /*
+            triangleVertices[5]
+            triangleVertices[9]
+            triangleVertices[10]
+            triangleVertices[11]
+            triangleVertices[15]
+            triangleVertices[16]
+            triangleVertices[17]*/
+
+            angle = performance.now() / 1000 / 10 * 2 * Math.PI;
             glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [0, 1, 0]);
             gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
