@@ -33,6 +33,7 @@ function main() {
     //console.log(gl);
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.enable(gl.DEPTH_TEST);
     
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -66,38 +67,97 @@ function main() {
         console.error("ERROR validating", gl.getProgramInfoLog(program));
     }
 
+
+    /*
     var triangleVertices = [
     //X , Y, Z  R, G, B
     0.0, 0.5, 0.0,  Math.random(), Math.random(), Math.random(),
     -0.5, -0.5, 0.0, Math.random(), Math.random(), Math.random(),
     0.5, -0.5, 0.0,  Math.random(), Math.random(), Math.random()
     ];
+    */
 
-    var boxVertices = [
-        //X , Y, Z, R, G, B
-        //top
-        -1.0, 1.0, -1.0, 0.5, 0.5, 0.5,
-        -1.0, 1.0, 1.0 , 0.5, 0.5, 0.5,
-        1.0, 1.0 , 1.0 , 0.5, 0.5, 0.5,
-        1.0, 1.0, -1.0 , 0.5, 0.5, 0.5,   
-        //left
-        -1.0, 1.0, 1.0 , 0.5, 0.5, 0.5,
-        -1.0, -1.0, 1.0, 0.5, 0.5, 0.5,
-        -1.0, -1.0, -1.0,0.5, 0.5, 0.5,
+   var boxVertices = 
+   [ // X, Y, Z           R, G, B
+       // Top
+       -1.0, 1.0, -1.0,   Math.random(), Math.random(), Math.random(),
+       -1.0, 1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       1.0, 1.0, 1.0,     Math.random(), Math.random(), Math.random(),
+       1.0, 1.0, -1.0,    Math.random(), Math.random(), Math.random(),
 
-    ]
-    var triangleVertices32 = new Float32Array(triangleVertices);
+       // Left
+       -1.0, 1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       -1.0, -1.0, 1.0,   Math.random(), Math.random(), Math.random(),
+       -1.0, -1.0, -1.0,  Math.random(), Math.random(), Math.random(),
+       -1.0, 1.0, -1.0,   Math.random(), Math.random(), Math.random(),
 
-    var triangleVertexBufferOb = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferOb);
-    gl.bufferData(gl.ARRAY_BUFFER, triangleVertices32, gl.DYNAMIC_DRAW);
+       // Right
+       1.0, 1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       1.0, -1.0, 1.0,   Math.random(), Math.random(), Math.random(),
+       1.0, -1.0, -1.0,  Math.random(), Math.random(), Math.random(),
+       1.0, 1.0, -1.0,   Math.random(), Math.random(), Math.random(),
+
+       // Front
+       1.0, 1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       1.0, -1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       -1.0, -1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       -1.0, 1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+
+       // Back
+       1.0, 1.0, -1.0,    Math.random(), Math.random(), Math.random(),
+       1.0, -1.0, -1.0,    Math.random(), Math.random(), Math.random(),
+       -1.0, -1.0, -1.0,    Math.random(), Math.random(), Math.random(),
+       -1.0, 1.0, -1.0,    Math.random(), Math.random(), Math.random(),
+
+       // Bottom
+       -1.0, -1.0, -1.0,   Math.random(), Math.random(), Math.random(),
+       -1.0, -1.0, 1.0,    Math.random(), Math.random(), Math.random(),
+       1.0, -1.0, 1.0,     Math.random(), Math.random(), Math.random(),
+       1.0, -1.0, -1.0,    Math.random(), Math.random(), Math.random(),
+   ];
+
+   var boxIndices =
+   [
+       // Top
+       0, 1, 2,
+       0, 2, 3,
+
+       // Left
+       5, 4, 6,
+       6, 4, 7,
+
+       // Right
+       8, 9, 10,
+       8, 10, 11,
+
+       // Front
+       13, 12, 14,
+       15, 14, 12,
+
+       // Back
+       16, 17, 18,
+       16, 18, 19,
+
+       // Bottom
+       21, 20, 22,
+       22, 20, 23
+   ];
+    //var triangleVertices32 = new Float32Array(triangleVertices);
+
+    var boxVertexBufferOb = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferOb);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
+
+    var boxIndexBufferOb = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferOb);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
 
     var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-    var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+    var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');   
     gl.vertexAttribPointer(
         positionAttribLocation,
         3, //num of elem
-        gl.FLOAT, //type
+        gl.FLOAT, //type    
         gl.FALSE,
         6 * Float32Array.BYTES_PER_ELEMENT,
         0
@@ -125,7 +185,7 @@ function main() {
     var worldMatrix = new Float32Array(16);
 
     glMatrix.mat4.identity(worldMatrix);
-    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -4], [0,0,0], [0,1,0]);
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -10], [0,0,0], [0,1,0]);
     glMatrix.mat4.perspective(projMatrix,glMatrix.glMatrix.toRadian(45),canvas.width/canvas.height,0.1,1000.0);
 
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
@@ -144,7 +204,7 @@ function main() {
         let si = 0;
 
         function loop() {
-            triangleVertices32[3] = triangleVertices32[3] + .001;
+            /*
             if (triangleVertices32[3] > 1) {
                 triangleVertices32[3] = 0;
             }
@@ -169,21 +229,15 @@ function main() {
                 si++;
             }
             gl.bufferData(gl.ARRAY_BUFFER, triangleVertices32, gl.DYNAMIC_DRAW);
-            /*
-            triangleVertices[5]
-            triangleVertices[9]
-            triangleVertices[10]
-            triangleVertices[11]
-            triangleVertices[15]
-            triangleVertices[16]
-            triangleVertices[17]*/
+            */
 
             angle = performance.now() / 1000 / 10 * 2 * Math.PI;
-            glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [0, 1, 0]);
+            glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [1, 1, 1]);
             gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            gl.drawArrays(gl.TRIANGLES, 0, 3);        
+            //gl.drawArrays(gl.TRIANGLES, 0, 3);
+            gl.drawElements(gl.TRIANGLES,boxIndices.length, gl.UNSIGNED_SHORT, 0);    
             requestAnimationFrame(loop);
 
         }
