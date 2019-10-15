@@ -34,7 +34,11 @@ function main() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clear(gl.COLOR_BUFFER_BIT)
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.frontFace(gl.CCW);
+    gl.cullFace(gl.BACK);
     
+
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
@@ -77,7 +81,7 @@ function main() {
     ];
     */
 
-   var boxVertices = 
+   var boxVertices = new Float32Array( 
    [ // X, Y, Z           R, G, B
        // Top
        -1.0, 1.0, -1.0,   Math.random(), Math.random(), Math.random(),
@@ -114,7 +118,7 @@ function main() {
        -1.0, -1.0, 1.0,    Math.random(), Math.random(), Math.random(),
        1.0, -1.0, 1.0,     Math.random(), Math.random(), Math.random(),
        1.0, -1.0, -1.0,    Math.random(), Math.random(), Math.random(),
-   ];
+   ]);
 
    var boxIndices =
    [
@@ -146,7 +150,7 @@ function main() {
 
     var boxVertexBufferOb = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferOb);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, boxVertices, gl.DYNAMIC_DRAW);
 
     var boxIndexBufferOb = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferOb);
@@ -185,7 +189,7 @@ function main() {
     var worldMatrix = new Float32Array(16);
 
     glMatrix.mat4.identity(worldMatrix);
-    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -10], [0,0,0], [0,1,0]);
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -7], [0,0,0], [0,1,0]);
     glMatrix.mat4.perspective(projMatrix,glMatrix.glMatrix.toRadian(45),canvas.width/canvas.height,0.1,1000.0);
 
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
@@ -195,13 +199,16 @@ function main() {
     //main render loop
 
         var angle = 0;
+        var XRotationMatrix = new Float32Array(16);
+        var YRotationMatrix = new Float32Array(16);
         var identityMatrix = new Float32Array(16);
         glMatrix.mat4.identity(identityMatrix);
         var incdec = [];
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < 72; i++) {
             incdec[i] = Math.random() >= 0.5;
         }
         let si = 0;
+        gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferOb);
 
         function loop() {
             /*
@@ -230,9 +237,51 @@ function main() {
             }
             gl.bufferData(gl.ARRAY_BUFFER, triangleVertices32, gl.DYNAMIC_DRAW);
             */
-
-            angle = performance.now() / 1000 / 10 * 2 * Math.PI;
-            glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [1, 1, 1]);
+            si = 0;
+            for (let i = 3; i < 6; i++) {
+                switch(incdec[si]) {
+                    case true:
+                        boxVertices[i] += .004;
+                        if (boxVertices[i] >= 1) {
+                            incdec[si] = false;
+                        }
+                        break;
+                    case false:
+                        boxVertices[i] -= .004;
+                        if (boxVertices[i] <= 0) {
+                            incdec[si] = true;
+                        }
+                    break;
+                }
+                si++;
+            }
+            for (let i = 9; i < boxVertices.length; i++) {
+                if ((i-3)%6 != 0) {
+                    continue;
+                }
+                for (let f = 0; f < 3; f++) {
+                    switch(incdec[si]) {
+                        case true:
+                            boxVertices[i+f] += Math.random()/100;
+                            if (boxVertices[i+f] >= 1) {
+                                incdec[si] = false;
+                            }
+                            break;
+                        case false:
+                            boxVertices[i+f] -= Math.random()/100;
+                            if (boxVertices[i+f] <= 0.2) {
+                                incdec[si] = true;
+                            }
+                        break;
+                    }
+                    si++;
+                }
+            }
+            gl.bufferData(gl.ARRAY_BUFFER, boxVertices, gl.DYNAMIC_DRAW);
+            angle = performance.now() / 1000 / 20 * 2 * Math.PI;
+            glMatrix.mat4.rotate(XRotationMatrix, identityMatrix, angle, [0, 1, 0]);
+            glMatrix.mat4.rotate(YRotationMatrix, identityMatrix, angle/5, [1, 0, 0]);
+            glMatrix.mat4.mul(worldMatrix, XRotationMatrix, YRotationMatrix);
             gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -245,6 +294,7 @@ function main() {
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
+
 function keypressed(e) {
     //console.log("keyboard event object: ");
     //console.log(e);

@@ -25,7 +25,7 @@ var vectorArray3d = [];
 for (let i = 0; i < 3; i++) {
     for (let f = 0; f < 3; f++) {
         for (let c = 0; c < 3; c++) {
-            vectorArray2[vectorArray2.length] = {x:i-1, y:f-1, z:c-1};
+            vectorArray3d[vectorArray3d.length] = {x:i-1, y:f-1, z:c-1};
         }
     }
 }
@@ -579,6 +579,46 @@ function displayTwoDNoise(fun=5,freq =50, layers = 3, blur2 = 2,blur1 = 100, var
     }
 }
 
+function display3DNoise(cells = 2, layers = 4) {
+    if (!document.getElementById("canvasElement")) {
+        let x = document.getElementById("canvasDiv");
+        x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
+    }
+    if (!ctx) {
+        ctx = document.getElementById("canvasElement").getContext("2d");
+    }
+    ctx.strokeStyle = "#FFFFFF";
+    let currentAmp = 1;
+    let noiseToDisplay = Perlin3D(500, 500, 100, cells, 1);
+    let newNoise;
+    for (let i = 0; i < layers; i++) {
+        currentAmp /= Math.pow(2, i+1);
+        newNoise = Perlin3D(500, 500, 100, cells * Math.pow(2, (i+1)), currentAmp, -(1/Math.pow(2, i+1)))
+        for (let i = 0; i < 500; i++) {
+            for (let f = 0; f < 500; f++) {
+                for (let z = 0; z < 100; z++) {
+                    noiseToDisplay[i][f][z] += newNoise[i][f][z];
+                }
+            }
+        }
+    }
+    let currentZ = 0
+    for (let i = 0; i < 500; i++) {
+        for (let f = 0; f < 500; f++) {
+            let colorString = "#";
+            let lv = Math.round(noiseToDisplay[i][f][currentZ]*100).toString(16)
+            if (lv.length == 1) {
+                lv = "0".concat(lv);
+            }
+            colorString = colorString.concat(lv);
+            colorString = colorString.concat(lv);
+            colorString = colorString.concat(lv);
+            ctx.fillStyle = colorString;
+            ctx.fillRect(f,i,1,1);            
+        }
+    }
+}
+
 function displayPointBox(noiseToDisplay) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
@@ -604,7 +644,47 @@ function displayPointBox(noiseToDisplay) {
     }
 }
 
-function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
+function getRandomUnitVector(dim) {
+    let ob = {};
+    let varName    
+    for (let i = 0; i < dim; i++) {
+        varName = "dim"+toString(i);
+        ob[varName] = Math.floor(Math.random()*3)-2;
+    }
+    return ob;
+}
+
+function PerlinGradients(size = [3,3]) {
+    let gradientArray = createNDimArray(size, undefined);
+    for () {
+
+    }
+
+
+}
+
+function xDimArray(x, size) {
+    if (x == 0) {
+        return 0;
+    }
+    return new Array(size).fill(xDimArray(x-1, size));
+}
+
+function createNDimArray(dimensions, fill = 0) {
+    if (dimensions.length > 0) {
+        var dim = dimensions[0];
+        var rest = dimensions.slice(1);
+        var newArray = new Array();
+        for (var i = 0; i < dim; i++) {
+            newArray[i] = createNDimArray(rest);
+        }
+        return newArray;
+     } else {
+        return fill;
+     }
+ }
+
+function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1, shift = 0) {
     //increase the dimensions if they do not fit into the given cell amount
     //extra will simply be cut later
     if (xdim%cells != 0) {
@@ -621,28 +701,26 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
     //size of the cell coordinate grid
     let bigCoords = {x: xdim/pointDensity, y: ydim/pointDensity, z: zdim/pointDensity};
     //initialize 3 dimensional array
-    let finalArray = new Array(ydim);
-    for (let yar of finalArray) {
-        yar = new Array(xdim); 
-        for (let xar of yar) {
-            xar = new Array(zdim);
-            for (let point of xar) {
-                point = 0.5;
-            }
+    let finalArray = new Array(ydim).fill([]);
+    for (let y = 0; y < ydim; y++) {
+        finalArray[y] = new Array(xdim).fill([]); 
+        for (let x = 0; x < xdim; x++) {
+            finalArray[y][x] = new Array(zdim).fill(0);
         }
     }
     //create the gradient array
-    let gradientArray = new Array(bigCoords.y+1);
-    for (let yar of gadientArray) {
-        yar = new Array(bigCoords.x+1);
-        for (let xar of yar) {
-            xar = new Array(bigCoords.z+1);
-            for (let vector of xar) {
+    let gradientArray = new Array(bigCoords.y+1).fill([]);
+    for (let y = 0; y < gradientArray.length; y++) {
+        gradientArray[y] = new Array(bigCoords.x+1).fill([]);
+        for (let x = 0; x < gradientArray[0].length; x++) {
+            gradientArray[y][x] = new Array(bigCoords.z+1);
+            for (let z = 0; z < gradientArray[0][0].length; z++) {
                 //add a random gradient vector to each gradient point in the 3D array
-                vector = vectorArray3d[Math.floor(Math.random()*vectorArray3d.length)];
+                gradientArray[y][x][z] = vectorArray3d[Math.floor(Math.random()*27)];
             }
         }
     }
+    console.info(gradientArray);
     let cornerArray = [], inX, inY, inZ, distanceArray = [], dpArray = [], lerpresults = [];
     //first iterate through each 'cell', and iterate through each point in each cell seperately
     for (let bigY = 0; bigY < bigCoords.y; bigY++) {
@@ -679,13 +757,14 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1) {
                             for (let i = 0; i < distanceArray.length ; i++) {
                                 dpArray[i] = distanceArray[i].x * cornerArray[i].x + distanceArray[i].y * cornerArray[i].y + distanceArray[i].z * cornerArray[i].z;
                             }
-                            lerpresults[0] = lerp(dpArray[0],dpArray[1],inZ);
-                            lerpresults[1] = lerp(dpArray[2],dparray[3],inZ);
-                            lerpresults[2] = lerp(lerpresults[0],lerpresults[1],inX);
-                            lerpresults[3] = lerp(dpArray[4],dparray[5],inZ);
-                            lerpresults[4] = lerp(dpArray[6],dparray[7],inZ);
-                            lerpresults[5] = lerp(lerpresults[3],lerpresults[4],inX);
-                            finalresult = lerp(lerpresults[2],lerpresults[5],inY);
+                            lerpresults[0] = lerp(dpArray[0],dpArray[1],smooth(inZ));
+                            lerpresults[1] = lerp(dpArray[2],dpArray[3],smooth(inZ));
+                            lerpresults[2] = lerp(lerpresults[0],lerpresults[1],smooth(inX));
+                            lerpresults[3] = lerp(dpArray[4],dpArray[5],smooth(inZ));
+                            lerpresults[4] = lerp(dpArray[6],dpArray[7],smooth(inZ));   
+                            lerpresults[5] = lerp(lerpresults[3],lerpresults[4],smooth(inX));
+                            //finalresult = lerp(lerpresults[2],lerpresults[5],smooth(inY));
+                            finalArray[bigY*pointDensity+y][bigX*pointDensity+x][bigZ*pointDensity*z] = (lerp(lerpresults[2],lerpresults[5],smooth(inY)) * amp) + shift;
                         }
                     }
                 }
