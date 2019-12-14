@@ -4,3 +4,9 @@
     background-color:black;
     margin-top:43px;
 }
+
+canvas {
+    height:100%;
+    width:100%;
+    
+}
