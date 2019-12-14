@@ -579,7 +579,7 @@ function displayTwoDNoise(fun=5,freq =50, layers = 3, blur2 = 2,blur1 = 100, var
     }
 }
 
-function display3DNoise(cells = 2, layers = 4) {
+function display3DNoise(cells = 2, layers = 0) {
     if (!document.getElementById("canvasElement")) {
         let x = document.getElementById("canvasDiv");
         x.innerHTML = "<canvas id='canvasElement' width='500' height='500'></canvas>";
@@ -589,11 +589,11 @@ function display3DNoise(cells = 2, layers = 4) {
     }
     ctx.strokeStyle = "#FFFFFF";
     let currentAmp = 1;
-    let noiseToDisplay = Perlin3D(500, 500, 100, cells, 1);
+    let noiseToDisplay = Perlin3D(500, 500, 10, cells, 1);
     let newNoise;
     for (let i = 0; i < layers; i++) {
         currentAmp /= Math.pow(2, i+1);
-        newNoise = Perlin3D(500, 500, 100, cells * Math.pow(2, (i+1)), currentAmp, -(1/Math.pow(2, i+1)))
+        newNoise = Perlin3D(500, 500, 10, cells * Math.pow(2, (i+1)), currentAmp, -(1/Math.pow(2, i+1)))
         for (let i = 0; i < 500; i++) {
             for (let f = 0; f < 500; f++) {
                 for (let z = 0; z < 100; z++) {
@@ -649,18 +649,9 @@ function getRandomUnitVector(dim) {
     let varName    
     for (let i = 0; i < dim; i++) {
         varName = "dim"+toString(i);
-        ob[varName] = Math.floor(Math.random()*3)-2;
+        ob[varName] = Math.floor(Math.random()*3)-1;
     }
     return ob;
-}
-
-function PerlinGradients(size = [3,3]) {
-    let gradientArray = createNDimArray(size, undefined);
-    for () {
-
-    }
-
-
 }
 
 function xDimArray(x, size) {
@@ -679,10 +670,32 @@ function createNDimArray(dimensions, fill = 0) {
             newArray[i] = createNDimArray(rest);
         }
         return newArray;
-     } else {
+    } else {
         return fill;
-     }
- }
+    }
+     
+}
+
+function PerlinGradients(dimensions = [10, 10], dimAmt = 2) {
+    if (dimensions.length > 0) {
+        let dim = dimensions[0];
+        let rest = dimensions.slice(1);
+        let newArray = new Array(dim).fill(PerlinGradients(rest, dimAmt));
+        return newArray;
+    } else {
+        return getRandomUnitVector(dimAmt);
+    }
+     
+}
+
+function PartialPerlin(coords = [0,0], gradientArray, amp = 1, shift = 0) {
+    let finalValue = 0;
+    let dimension = coords.length
+    let cells = Math.min(gradientArray.length, gradientArray[0].length, gradientArray[0][0].length) - 1;
+    
+
+    return finalValue;
+}
 
 function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1, shift = 0) {
     //increase the dimensions if they do not fit into the given cell amount
@@ -765,6 +778,7 @@ function Perlin3D(xdim = 500, ydim = 500, zdim = 1000 , cells = 2, amp = 1, shif
                             lerpresults[5] = lerp(lerpresults[3],lerpresults[4],smooth(inX));
                             //finalresult = lerp(lerpresults[2],lerpresults[5],smooth(inY));
                             finalArray[bigY*pointDensity+y][bigX*pointDensity+x][bigZ*pointDensity*z] = (lerp(lerpresults[2],lerpresults[5],smooth(inY)) * amp) + shift;
+                            console.log("point at {Y: "+(bigY*pointDensity+y)+", X: "+(bigX*pointDensity+x)+", Z: "+(bigZ*pointDensity+z)+"} generated.");
                         }
                     }
                 }
