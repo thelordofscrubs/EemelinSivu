@@ -10,3 +10,19 @@ canvas {
     width:100%;
     
 }
+
+#mapCanvas {
+    z-index: 0;
+}
+
+#mapColorCanvas {
+    z-index: 1;
+}
+
+#spriteCanvas {
+    z-index: 2;
+}
+
+#uiCanvas {
+    z-index: 3;
+}
