@@ -57,7 +57,7 @@ function unitGroup(team = 1, size = 10, position = new Vector2(10, 10), unitType
     //radius is also used as a size metric for visualizing groups, and increments at every power of ten
     this.radius = radius;
     this.currentCell = [Math.floor(position.x/5), Math.floor(position.y/5)];
-    mapCellGrid[currentCell[0]][currentCCell[1]].push(this)
+    mapCellGrid[this.currentCell[0]][this.currentCell[1]].push(this)
 }
 
 //constructor for a group of unit groups of different types
@@ -93,12 +93,13 @@ function spawner(team = 0, size = 1, position = new Vector2(20,20), upgradeLevel
         //find all unit groups in surrounding cells
         if (!this.groupToSpawnTo || this.groupToSpawnTo.position != position) {
             this.groupToSpawnTo = new unitGroup(team, 1, position, currentUnit, null, 1, defaultMoveSpeed);
-            unitGroups.push(groupToSpawnTo);
+            unitGroups.push(this.groupToSpawnTo);
         } else {
         this.groupToSpawnTo.incrementSize();
         }
     }
 
+    this.groupToSpawnTo;
     this.team = team;
     this.size = size;
     this.position = position;
@@ -110,6 +111,18 @@ function spawner(team = 0, size = 1, position = new Vector2(20,20), upgradeLevel
 
 }
 
+
+
+
+//this section is a bunch of initialization functions, including the actual activation functions that the user uses buttons to run
+
+function startButtonPressed() {
+
+}
+
+function resetButtonPressed() {
+
+}
 
 //initialize the game canvas; runs on page load
 function initializeCanvasContext() {
@@ -134,6 +147,26 @@ function initializeCanvasContext() {
     }
 }
 
+
+//this will be used to generate a map, but for now its just a green backdrop
+function canvasSetup() {
+    mapContext.fillStyle = colors.MAP_GREEN;
+    mapContext.fillRect(0,0, canvasSize[0], canvasSize[1]);
+
+}
+
+function onStartup() {
+
+}
+
+//this generates the gameplay portion of the map, actually placing the spawners in the correct spots
+function getMap() {
+    let currentMap = {spawners: [],type: mapTypes.PLAIN};
+    return currentMap;
+}
+
+
+
 //this is the function that gets looped for the game to function
 //most of the top level functions inside here should be self explanatory
 function gameLoopFunction() {
@@ -147,30 +180,22 @@ function gameLoopFunction() {
     }
 }
 
+//this isnt in the main loop function because physics shouldnt be reliant on fps
+
 function drawLoop() {
+    spriteContext.clearRect(0,0,1000,750);
     drawUnits();
     drawSpawners();
+    uiContext.clearRect(0,0,1000,750);
     drawOverlay();
 }
 
+
 function spawnUnits() {
-
-    return;
-}
-
-function onStartup() {
-
-}
-
-function canvasSetup() {
-    mapContext.fillStyle = colors.MAP_GREEN;
-    mapContext.fillRect(0,0, canvasSize[0], canvasSize[1]);
-
-}
-
-function getMap() {
-    let currentMap = {spawners: [],type: mapTypes.PLAIN};
-    return currentMap;
+    for (spawner of spawners) {
+        spawner.spawnUnit();
+    }
+    return; //consistency is for programmers still in school
 }
 
 function drawProgressBar() {
@@ -193,27 +218,127 @@ function drawProgressBar() {
     
 }
 
-function sumTo(arrayIn = [], arrayPos = 0) {
-    let sum = 0;
-    if (arrayPos > arrayIn.length ) {
-        arrayPos = arrayIn.length;
-    }
-    for (let i = 0; i < arrayPos; i++) {
-        sum += arrayIn[i];
-    }
-    return sum;
-}
-
 function drawUnits() {
-    for (unitGroup of unitGroups) {
-
+    for (unit of unitGroups) {
+        amt = (""+unit.size)[0];
+        drawUnitSprite(unit.position.returnCopy(), amt, unit.radius, teams[unit.team].color);
     }
 }
 
-function drawUnitSprite(position, size) {
-    drawTriangle(size*2);
+//draws a sprite for a unit, drawing 1-9 triangles of the given size to indicate how many of the highest order of unit are in the group
+//for example, a group with a strength of 1-9 is just the smallest triangle that many times, but then the bigger size only gets a new triangle every 10 strength
+function drawUnitSprite(position, amount, radius, color) {
+    let sd = radius*5+5;
+    position.mult(new Vector2(10,10));
+    switch(amount) {
+        case "1":
+            position.add(new Vector2(0,-(sd/2)));
+            drawTriangle(sd, position, spriteContext, color);
+            break;
+        case "2":
+            position.add(new Vector2(0,-(sd/2)));
+            for (let i = 0; i < 2; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            }
+            break;
+        case "3":
+            position.add(new Vector2(0,-(sd)));
+            for (let i = 0; i < 2; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            drawTriangle(sd, position, spriteContext, color);
+            break;
+
+        case "4":
+            position.add(new Vector2(0,-(sd)));
+            for (let i = 0; i < 2; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 2; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            }
+            break;
+
+        case "5":
+            position.add(new Vector2(0,-(sd)));
+            for (let i = 0; i < 2; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            break;
+
+        case "6":
+            position.add(new Vector2(0,-(sd)));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            break;
+
+        case "7":
+            position.add(new Vector2(0,-(sd)));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 4; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd*1.5)+sd*i,0)), spriteContext, color);
+            }
+            break;
+        case "8":
+            position.add(new Vector2(0,-(sd*1.5)));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 2; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd*0.5)+sd*i,0)), spriteContext, color);
+            }
+            break;
+        case "9":
+            position.add(new Vector2(0,-(sd*1.5)));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            position.add(new Vector2(0,sd));
+            for (let i = 0; i < 3; i++) {
+                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            }
+            break;
+    }
+        
 }
 
+
+
+
+
+//this section is random canvas functions used to facilitate drawing stuff i need to draw often
+
+//test function used to draw every unit sprite
+function testUnitSpriteDrawFunction() {
+    for (let i = 1; i < 10; i++) {
+        drawUnitSprite(new Vector2(5+i*6, 30), i, 1, colors.TEAM_PURPLE);
+    }
+}
+
+//really just a test function to use drawTriangle a bunch with random inputs
 function drawRandomTriangles(numberOfTriangles) {
     for (let i = 0; i < numberOfTriangles; i++) {
         let color = generateRandomColor();
@@ -221,6 +346,7 @@ function drawRandomTriangles(numberOfTriangles) {
     }
 }
 
+//draws an equilateral triangle with var pos being the tip
 function drawTriangle(sideLength, pos, ctx, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -241,6 +367,7 @@ function drawTriangle(sideLength, pos, ctx, color) {
 
 
 //idk why im maing these manually and not just using a library tbh
+//these are basic utility/math functions, including a vector2 object used for storing pairs of numbers and their derivatives
 function Vector2(x = 1, y = 1) {
     this.updateSelf = function() {
         this.list = [this.x, this.y];
@@ -263,33 +390,54 @@ function Vector2(x = 1, y = 1) {
         return this;
     }
 
+    this.addCopy = function (vector = new Vector2(1,1)) {
+        let copy = this.returnCopy();
+        copy.x += vector.x;
+        copy.y += vector.y;
+        //copy.updateSelf();
+        return copy;
+    }
+
+    this.mult = function (vector = new Vector2(1,1)) {
+        this.x *= vector.x;
+        this.y *= vector.y;
+        this.updateSelf();
+        return this;
+    }
+
     this.sub = function (vector = new Vector2(1,1)) {
         this.x -= vector.x;
         this.y -= vector.y;
         this.updateSelf();
-        return
+        return this;
     }
 
     //returns optionally negative version of the current vector
     this.returnCopy = function (isNeg = false) {
         if (!isNeg) {
-            let copy = new Vector2(this.x, this.y);     
+            return new Vector2(this.x, this.y);     
         } else {
-            let copy = new Vector2(-this.x, -this.y);
+            return new Vector2(-this.x, -this.y);
         }
-        return copy;
+        return;
+    }
+
+    this.changeLength = function (newLength = 1) {
+        let uv = this.unit();
+        uv.mult(newLength);
+        this.x = uv.x;
+        this.y = uv.y;
+        this.updateSelf();
     }
 
     //checks if the given vector is within the given radius
     this.isWithin = function (radius = .5, position = new Vector2(1,1)) {
-        let bool;
         position.sub(this);
         if (position.magnitude > -radius && position.magnitude < radius) {
-            bool = true;
+            return true;
         } else {
-            bool = false;
+            return false;
         }
-        return bool;
     }
 
     this.x = x;
@@ -297,26 +445,44 @@ function Vector2(x = 1, y = 1) {
     this.updateSelf();
 }
 
-function findPointAtAngle(length, angle) {
+//sums all the numbers in an array up to a specific index
+function sumTo(arrayIn = [], arrayPos = 0) {
+    let sum = 0;
+    if (arrayPos > arrayIn.length ) {
+        arrayPos = arrayIn.length;
+    }
+    for (let i = 0; i < arrayPos; i++) {
+        sum += arrayIn[i];
+    }
+    return sum;
+}
+
+//finds the distance in [x,y] format to a point at an angle and distance away
+function findPointAtAngle(length, angleInDegrees/*THIS IS IN DEGREES, NOT RADIANS*/) {
     let newPoint = [0,0];
-    newPoint[0] = length*Math.cos(angle*Math.PI/180);
-    newPoint[1] = length*Math.sin(angle*Math.PI/180);
+    newPoint[0] = length*Math.cos(angleInDegrees*Math.PI/180);
+    newPoint[1] = length*Math.sin(angleInDegrees*Math.PI/180);
     return [newPoint[0],newPoint[1]];
 }
 
+//squares a number
+//this should be in the native Math object goddamnit
 function sqr(x) {
     return Math.pow(x,2);
 }
 
+//finds the magnitude of a given vector in [x,y] form
 function vectorMagnitude(vectorIn = [2, 2]) {
     return Math.sqrt(sqr(vectorIn[0])+sqr(vectorIn[1]));
 }
 
+//returns a unit vector of the given vector in [x,y] form
 function makeUnitVector(vectorIn = [2, 2]) {
     let vm = vectorMagnitude(vectorIn);
     return [vectorIn[0]/vm, vectorIn[1]/vm];
 }
 
+//finds the amount of digits in a base 10 number
 function findDigits(number, x = 1) {
     if (number >= 10) {
         number /= 10;
@@ -326,6 +492,7 @@ function findDigits(number, x = 1) {
     }
 }
 
+//generates a random color in the form "#012abc" with a floor of "#565656" to force the colors to not be just black
 function generateRandomColor() {
     let colorString = "#"
     let RGB = [0,0,0];
