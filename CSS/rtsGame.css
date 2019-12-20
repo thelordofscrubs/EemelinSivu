@@ -1,5 +1,5 @@
 #gameCanvas {
-    position: absolute;
+    position: relative;
     height:750px;
     width:1000px;
     background-color:black;
@@ -27,7 +27,12 @@ canvas {
     z-index: 2;
 }
 
+#overlayCanvas1 {
+    position: absolute;
+    z-index:3;
+}
+
 #uiCanvas {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
 }

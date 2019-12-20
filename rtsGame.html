@@ -8,7 +8,7 @@
     <script src="/JS/Navbar.js"></script>
     <script src="/JS/rtsGame.js"></script>
 </head>
-<body onload="initializeCanvasContext();">
+<body onload="initializeCanvasContext();setUpListeners();">
 <div class="navbar" id="navbar">        
 </div>
 
@@ -16,10 +16,11 @@
     <canvas id="mapCanvas" width=1000 height=750></canvas>
     <canvas id="mapColorCanvas" width=1000 height=750></canvas>
     <canvas id="spriteCanvas" width=1000 height=750></canvas>
+    <canvas id="overlayCanvas1" width=1000 height=750></canvas>
     <canvas id="uiCanvas" width=1000 height=750></canvas>
 </div>
 
-<div id="controlButtons">
+<div id="controlButtons" style="display:block">
     <button onclick="startButtonPressed()">Start Game</button>
     <button onclick="resetButtonPressed()">Reset</button>
 </div>

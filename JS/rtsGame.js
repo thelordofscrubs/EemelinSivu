@@ -4,19 +4,25 @@ var spriteCanvas;
 var spriteContext;
 var mapColorCanvas;
 var mapColorContext;
+var overlayCanvas1;
+var overlayContext1;
 var uiCanvas;
 var uiContext;
 var canvasSize = [1000, 750];
-var gameLoop;
+var gameLoopVar;
+var drawLoopVar;
 var spawners = [];
 var mapSize = [100, 75];
 var teams = [];
 var unitGroups = [];
 var groupGroups = [];
-var defaultMoveSpeed = .05;
+var defaultMoveSpeed = .25;
+var gameActive = false;
+var paused = false;
 const unitTypes = {SWORD: "sword", ARCHER: "archer", MAGE: "mage"};
 const mapTypes = {ISLAND: "isle", MOUNTAIN_LEFT: "mtnl", MOUNTAIN_TOP: "mtnt", OCEAN_LEFT: "ocnl", OCEAN_TOP: "ocnt", VALLEY: "vale", PLAIN: "flat"};
 const colors = {MAP_GREEN: "#2bcf62", TEAM_BLUE: "#203cf5", TEAM_RED: "#d10000", TEAM_PURPLE: "#bb00c4", TEAM_WHITE: "#FFFFFF"};
+
 
 var mapCellGrid = [];
 for (let i = 0; i < mapSize[0]/5; i++) {
@@ -27,27 +33,72 @@ for (let i = 0; i < mapSize[0]/5; i++) {
 }
 var cellSize = [mapCellGrid.length, mapCellGrid[0].length];
 
+
+function setUpListeners() {
+    window.addEventListener("keydown", pauseGameListener);
+    document.getElementById("gameCanvas").addEventListener("click", clickListener);
+    console.log("finished adding event listeners");
+}
+
+
+function pauseGameListener(e) {
+    if (e.key == "p") {
+        console.log("the p key was pressed, toggling pause");
+        paused = paused == false ? true : false;
+    }
+}
+
+function clickListener(e) {
+    console.info(e);
+}
+
 //constructor for a group of units
-function unitGroup(team = 1, size = 10, position = new Vector2(10, 10), unitType = unitTypes.SWORD, movingTo = {coords: new Vector2(0, 0), movementDirection: new Vector2(0,0), currentlyMoving:false}, radius = 2, speed = defaultMoveSpeed) {
+function UnitGroup(team = 1, size = 10, position = new Vector2(10, 10), unitType = unitTypes.SWORD,spawner = null, movingTo = {coords: new Vector2(0, 0), movementDirection: new Vector2(0,0), currentlyMoving:false}, radius = 2, speed = defaultMoveSpeed) {
     this.incrementSize = function () {
         this.size++;
-        this.radius = findDigits(size);
+        this.radius = findDigits(this.size);
+        return true;
     }
     this.changeSize = function (amt = -5) {
         this.size += amt;
-        this.radius = findDigits(size);
+        this.radius = findDigits(this.size);
     }
     this.setDestination = function (dest = new Vector2(10,10)) {
-        this.movingTo.coords = dest;
-        this.movingTo.movementDirection = dest.returnCopy().sub(position);
+        if (this.position.isSimilar(dest) || this.movingTo.coords.isSimilar(dest)) {
+            console.log("new destination is too close to the old one, aborting move command");
+            return;
+        }
+        this.movingTo.coords = dest.returnCopy();
+        this.movingTo.movementDirection = dest.returnCopy().sub(this.position);
+        this.movingTo.unit = this.movingTo.movementDirection.unit()
         this.movingTo.currentlyMoving = true;
+        this.movingTo.distanceTo = this.movingTo.movementDirection.magnitude;
+        if (this.spawner) {
+            this.spawner.groupToSpawnTo = null;
+        }
+        this.spawner = null;
     }
     this.updatePos = function () {
-        this.position.add(this.movingTo.movementDirection.unit*this.movementSpeed);
+        let dtt = this.movingTo.unit.multCopy(new Vector2(this.movementSpeed,this.movementSpeed));
+        if (this.movingTo.distanceTo < dtt.magnitude) {
+            this.position.add(this.movingTo.unit.multCopy(new Vector2(this.movingTo.distanceTo,this.movingTo.distanceTo)));
+            this.movingTo.currentlyMoving = false;
+            this.updateDistance();
+            return;
+        }
+        this.position.add(dtt);
+        this.updateDistance();
     }
+
+    this.updateDistance = function () {
+        this.movingTo.movementDirection = this.movingTo.coords.returnCopy().sub(this.position);
+        this.movingTo.distanceTo = this.movingTo.movementDirection.magnitude;
+    }
+
     if (!movingTo) {
         movingTo = {coords: new Vector2(0,0), movementDirection: new Vector2(0,0), currentlyMoving: false};
     }
+    this.spawner = spawner;
     this.team = team;
     this.size = size;
     this.position = position;
@@ -61,27 +112,46 @@ function unitGroup(team = 1, size = 10, position = new Vector2(10, 10), unitType
 }
 
 //constructor for a group of unit groups of different types
-function groupGroup(team = 1, size = 2, position = new Vector2(10,10), movingTo = {coords: new Vector2(10, 10), currentlyMoving:false}, speed = defaultMoveSpeed/2) {
+function GroupGroup(team = 1, size = 2, position = new Vector2(10,10), movingTo = {coords: new Vector2(10, 10), currentlyMoving:false}, speed = defaultMoveSpeed/2) {
 
 }
 
-function team(name = "neutral", number = 0, color = colors.TEAM_WHITE) {
-    this.changeStrength = function (amt) {
+function Team(name = "neutral", number = 0, color = colors.TEAM_WHITE) {
+
+    this.changeUnits = function (amt) {
+        this.units += amt;
         this.strength += amt;
     }
 
+    this.changeSpawners = function (amt) {
+        this.spawners += amt;
+        this.strength += amt*10;
+    }
+
+    this.spawners = 1;
+    this.units = 0;
     this.name = name;
     this.number = number;
     this.strength = 10;
     this.color = color;
 }
 
-teams[0] = new team("player", 0, colors.TEAM_PURPLE);
-teams[1] = new team("neutral", 1);
-
-function spawner(team = 0, size = 1, position = new Vector2(20,20), upgradeLevel = 0, currentUnit = unitTypes.SWORD, possibleUnits = [unitTypes.SWORD]) {
+function Spawner(team = 1, size = 1, position = new Vector2(20,20), upgradeLevel = 0, currentUnit = unitTypes.SWORD, possibleUnits = [unitTypes.SWORD]) {
     this.changeTeam = function (newTeam) {
+        if (this.team == 1) {
+            this.activate();
+        }
+        teams[this.team].changeSpawners(-1);
         this.team = newTeam;
+        this.health = 10;
+        teams[this.team].changeSpawners(1);
+    }
+
+    this.heal = function() {
+        if (this.health >= this.maxHealth) {
+            return;
+        }
+        this.health += 1;
     }
 
     this.activate = function () {
@@ -91,14 +161,32 @@ function spawner(team = 0, size = 1, position = new Vector2(20,20), upgradeLevel
     this.spawnUnit = function () {
         //let localGroups = mapCellGrid[cell[0],cell[1]];
         //find all unit groups in surrounding cells
-        if (!this.groupToSpawnTo || this.groupToSpawnTo.position != position) {
-            this.groupToSpawnTo = new unitGroup(team, 1, position, currentUnit, null, 1, defaultMoveSpeed);
+        if (!this.active) {
+            return;
+        }
+        teams[this.team].changeUnits(1);
+        if (this.groupToSpawnTo && this.groupToSpawnTo.incrementSize()) {
+            return;
+        }
+        //console.info(this.groupToSpawnTo);
+        if (this.groupToSpawnTo) {
+        //console.log("spawning unit at location: "+this.position.list+". compare lists: "+this.groupToSpawnTo.position.returnList() +" --- "+ this.position.returnList())
+        }
+        if (this.groupToSpawnTo == null/* || this.groupToSpawnTo.position.returnList() != this.position.returnList()*/) {
+            this.groupToSpawnTo = new UnitGroup(this.team, 1, this.position.returnCopy(), this.currentUnit, this, null, 1, defaultMoveSpeed);
             unitGroups.push(this.groupToSpawnTo);
-        } else {
-        this.groupToSpawnTo.incrementSize();
         }
     }
 
+    this.takeDamage = function (dmg, team) {
+        this.health -= dmg;
+        if (this.health <= 0) {
+            this.changeTeam(team);
+        }
+    }
+    
+    this.health = size*10;
+    this.maxHealth = size*10;
     this.groupToSpawnTo;
     this.team = team;
     this.size = size;
@@ -106,7 +194,7 @@ function spawner(team = 0, size = 1, position = new Vector2(20,20), upgradeLevel
     this.cell = [Math.floor(position.x/5),Math.floor(position.y/5)]
     this.possibleUnits = possibleUnits;
     this.currentUnit = possibleUnits[0];
-    this.active = false;
+    this.active = team == 1 ? false : true;
     this.upgradeLevel = upgradeLevel;
 
 }
@@ -114,14 +202,43 @@ function spawner(team = 0, size = 1, position = new Vector2(20,20), upgradeLevel
 
 
 
+
+
 //this section is a bunch of initialization functions, including the actual activation functions that the user uses buttons to run
 
 function startButtonPressed() {
-
+    if (gameActive) {
+        return;
+    }
+    teams[0] = new Team("player", 0, colors.TEAM_PURPLE);
+    teams[1] = new Team("neutral", 1);
+    teams[2] = new Team("enemy1", 2, colors.TEAM_RED);
+    let map = getMap(cellSize);
+    mapSetup(map.type);
+    spawners = map.spawners;
+    teams[1].changeSpawners(spawners.length-teams.length+1);
+    drawLoopVar = setInterval(drawLoop, 50);
+    gameLoopVar = setInterval(gameLoopFunction, 250);
+    gameActive = true;
 }
 
 function resetButtonPressed() {
-
+    gameActive = false;
+    clearInterval(drawLoopVar);
+    clearInterval(gameLoopVar);
+    spawners = [];
+    teams = [];
+    unitGroups = [];
+    teams[0] = new Team("player", 0, colors.TEAM_PURPLE);
+    teams[1] = new Team("neutral", 1);
+    teams[2] = new Team("enemy1", 2, colors.TEAM_RED);
+    let map = getMap(cellSize);
+    mapSetup(map.type);
+    spawners = map.spawners;
+    teams[1].changeSpawners(spawners.length-teams.length+1);
+    drawLoopVar = setInterval(drawLoop, 100);
+    gameLoopVar = setInterval(gameLoopFunction, 500);
+    gameActive = true; 
 }
 
 //initialize the game canvas; runs on page load
@@ -130,58 +247,81 @@ function initializeCanvasContext() {
     uiCanvas = document.getElementById("uiCanvas");
     mapColorCanvas = document.getElementById("mapColorCanvas");
     spriteCanvas = document.getElementById("spriteCanvas");
+    overlayCanvas1 = document.getElementById("overlayCanvas1");
     if (!spriteCanvas || !mapColorCanvas || !uiCanvas || !mapCanvas) {
         console.log("failed to grab a canvas, trying again in 1000ms");
         setTimeout(initializeCanvasContext(), 1000);
     } else {
-        console.log("successfully grabbed every canvas, initializing context");
+        //console.log("successfully grabbed every canvas, initializing context");
         spriteContext = spriteCanvas.getContext("2d");
-        console.info(spriteContext);
+        //console.info(spriteContext);
         mapColorContext = mapColorCanvas.getContext("2d");
         mapColorContext.globalAlpha = 0.3;
-        console.info(mapColorContext);
+        //console.info(mapColorContext);
         uiContext = uiCanvas.getContext("2d");
-        console.info(uiContext);
+        //console.info(uiContext);
         mapContext = mapCanvas.getContext("2d");
-        console.info(mapContext);
+        //console.info(mapContext);
+        overlayContext1 = overlayCanvas1.getContext("2d");
+        //console.info(overLayContext1);
+        console.info(mapContext, mapColorContext, spriteContext, overlayContext1, uiContext);
     }
 }
 
-
 //this will be used to generate a map, but for now its just a green backdrop
-function canvasSetup() {
+function mapSetup(mapType) {
     mapContext.fillStyle = colors.MAP_GREEN;
     mapContext.fillRect(0,0, canvasSize[0], canvasSize[1]);
 
 }
 
-function onStartup() {
-
-}
-
 //this generates the gameplay portion of the map, actually placing the spawners in the correct spots
-function getMap() {
-    let currentMap = {spawners: [],type: mapTypes.PLAIN};
+function getMap(csl) {
+    let currentMap = {spawners: generateSpawners(csl),type: mapTypes.PLAIN};
     return currentMap;
 }
+
+function generateSpawners(ms) {
+    let spawnerList = [];
+    spawnerList[0] = new Spawner(0, 1, new Vector2(5,5));
+    spawnerList[1] = new Spawner(2, 1, new Vector2(90, 70));
+    for (let i = 0; i < 8; i++) {
+        spawnerList.push(new Spawner(1, 1, new Vector2(Math.floor(Math.random()*70)+10, Math.floor(Math.random()*50)+10)));
+    }
+    return spawnerList;
+}
+
+
+
+
 
 
 
 //this is the function that gets looped for the game to function
 //most of the top level functions inside here should be self explanatory
 function gameLoopFunction() {
+    if (paused) {
+        return;
+    }
     spawnUnits();
     moveUnits();
-    unitsFight(); //nearby hostile units will kill each other and be removed from the game
-    if (captureSpawners()) { //captureSpawners() will return true if any were captured, triggering a check to see if the game is over
+    //unitsFight(); //nearby hostile units will kill each other and be removed from the game
+    /*if (captureSpawners()) { //captureSpawners() will return true if any were captured, triggering a check to see if the game is over
         if (checkGameEnd()) {
             endGame();
+        }
+    }*/
+}
+
+function moveUnits() {
+    for (unit of unitGroups) {
+        if (unit.movingTo.currentlyMoving) {
+            unit.updatePos();
         }
     }
 }
 
 //this isnt in the main loop function because physics shouldnt be reliant on fps
-
 function drawLoop() {
     spriteContext.clearRect(0,0,1000,750);
     drawUnits();
@@ -190,12 +330,22 @@ function drawLoop() {
     drawOverlay();
 }
 
+function drawOverlay() {
+    drawProgressBar();
+}
 
 function spawnUnits() {
     for (spawner of spawners) {
         spawner.spawnUnit();
     }
-    return; //consistency is for programmers still in school
+    return; //consistency is for squares
+}
+
+function drawSpawners() {
+    for (spawner of spawners) {
+        spriteContext.fillStyle = teams[spawner.team].color;
+        spriteContext.fillRect(spawner.position.x*10-5, spawner.position.y*10-20,spawner.size*10,spawner.size*10);
+    }
 }
 
 function drawProgressBar() {
@@ -211,115 +361,156 @@ function drawProgressBar() {
         bars.push(team/totalStrength*totalLength);
     }
     for (let i = 0; i < bars.length; i++) {
-        console.info("drawing rectangle of color: "+ teams[i].color + " and coords: "+parseInt(200+sumTo(bars,i))+", "+ 650 +", "+ bars[i]+", "+ 50);
+        //console.info("drawing rectangle of color: "+ teams[i].color + " and coords: "+parseInt(200+sumTo(bars,i))+", "+ 650 +", "+ bars[i]+", "+ 50);
         uiContext.fillStyle = teams[i].color;
-        uiContext.fillRect(200+sumTo(bars,i), 650, bars[i], 50);
+        uiContext.fillRect(200+sumTo(bars,i), 10, bars[i], 50);
     }
     
 }
 
+//runs drawUnitSprite for every unit in the list, while also parsing the amount of triangles to draw
 function drawUnits() {
     for (unit of unitGroups) {
-        amt = (""+unit.size)[0];
-        drawUnitSprite(unit.position.returnCopy(), amt, unit.radius, teams[unit.team].color);
+        let uss = ""+unit.size; //yes this is faster to run than unit.size.toString()
+        drawUnitSprite(unit.position.returnCopy(), uss[0], uss, unit.radius, teams[unit.team].color);
     }
 }
 
 //draws a sprite for a unit, drawing 1-9 triangles of the given size to indicate how many of the highest order of unit are in the group
 //for example, a group with a strength of 1-9 is just the smallest triangle that many times, but then the bigger size only gets a new triangle every 10 strength
-function drawUnitSprite(position, amount, radius, color) {
+function drawUnitSprite(position, amount, stw, radius, color) {
     let sd = radius*5+5;
-    position.mult(new Vector2(10,10));
+    position.mult(new Vector2(10,10)).floor();
+    let fontSize = sd;
+    spriteContext.font = sd+"px Arial";
+    let form;
+    let textPos;
     switch(amount) {
         case "1":
-            position.add(new Vector2(0,-(sd/2)));
-            drawTriangle(sd, position, spriteContext, color);
+            form = [1];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
+            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
         case "2":
-            position.add(new Vector2(0,-(sd/2)));
-            for (let i = 0; i < 2; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            form = [2];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
         case "3":
-            position.add(new Vector2(0,-(sd)));
-            for (let i = 0; i < 2; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            form = [2,1];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            drawTriangle(sd, position, spriteContext, color);
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
-
         case "4":
-            position.add(new Vector2(0,-(sd)));
-            for (let i = 0; i < 2; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            form = [2,2];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 2; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
-            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
-
         case "5":
-            position.add(new Vector2(0,-(sd)));
-            for (let i = 0; i < 2; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd/2)+sd*i,0)), spriteContext, color);
+            form = [2,3];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[1])-1,position.y-2, sd*form[1]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
-            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
-
         case "6":
-            position.add(new Vector2(0,-(sd)));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            form = [3,3];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
-            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
-
         case "7":
-            position.add(new Vector2(0,-(sd)));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            form = [3,3,1];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 4; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd*1.5)+sd*i,0)), spriteContext, color);
-            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
         case "8":
-            position.add(new Vector2(0,-(sd*1.5)));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            form = [3,3,2];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
-            }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 2; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd*0.5)+sd*i,0)), spriteContext, color);
-            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
         case "9":
-            position.add(new Vector2(0,-(sd*1.5)));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
+            form = [3,3,3];
+            textPos = position.returnCopy();
+            position.add(new Vector2(0,-(0.5*sd*form.length)));
+            spriteContext.strokeRect(position.x-(sd*0.5*form[0])-1,position.y-2, sd*form[0]+2, sd*form.length+2);
+            for (let i = 0; i < form.length; i++) {
+                for (let f = 0; f < form[i]; f++) {
+                    drawTriangle(sd, position.addCopy(new Vector2(-(sd*(0.5*(form[i]-1)))+sd*f,0)), spriteContext, color);
+                }
+                position.add(new Vector2(0,sd));
             }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
-            }
-            position.add(new Vector2(0,sd));
-            for (let i = 0; i < 3; i++) {
-                drawTriangle(sd, position.addCopy(new Vector2(-(sd)+sd*i,0)), spriteContext, color);
-            }
+            spriteContext.fillStyle = "#000000";
+            spriteContext.fillText(stw,textPos.x-(spriteContext.measureText(stw).width/2),textPos.y+(fontSize/2)-2);
             break;
     }
         
@@ -378,6 +569,24 @@ function Vector2(x = 1, y = 1) {
         this.unitList = [unitVector[0], unitVector[1]];
     }
 
+    this.isSimilar = function (vector2) {
+        if (Math.abs(this.x-vector2.x+this.y-vector2.y) < .005) {
+            return true;
+        }
+        return false;
+    }
+
+    this.floor = function() {
+        this.x = Math.floor(this.x);
+        this.y = Math.floor(this.y);
+        this.updateSelf();
+        return this;
+    }
+
+    this.returnMagnitude = function () {
+        return this.magnitude;
+    }
+
     this.unit = function () {
         return new Vector2(this.unitx, this.unity);
     }
@@ -391,18 +600,25 @@ function Vector2(x = 1, y = 1) {
     }
 
     this.addCopy = function (vector = new Vector2(1,1)) {
-        let copy = this.returnCopy();
-        copy.x += vector.x;
-        copy.y += vector.y;
+        let copy = new Vector2(this.x+vector.x, this.y+vector.y);
         //copy.updateSelf();
         return copy;
     }
 
-    this.mult = function (vector = new Vector2(1,1)) {
-        this.x *= vector.x;
-        this.y *= vector.y;
-        this.updateSelf();
+    this.mult = function (vector) {
+        if (this.x && this.y) {
+            this.x *= vector.x;
+            this.y *= vector.y;
+            this.updateSelf();
+        } else {
+            return this.mult(new Vector2(vector,vector));
+        }
         return this;
+    }
+
+    this.multCopy = function (vector = new Vector2(1,1)) {
+        let copy = new Vector2(vector.x * this.x, vector.y* this.y);
+        return copy;
     }
 
     this.sub = function (vector = new Vector2(1,1)) {
@@ -422,12 +638,17 @@ function Vector2(x = 1, y = 1) {
         return;
     }
 
+    this.returnList = function () {
+        return this.list;
+    }
+
     this.changeLength = function (newLength = 1) {
         let uv = this.unit();
         uv.mult(newLength);
         this.x = uv.x;
         this.y = uv.y;
         this.updateSelf();
+        return this;
     }
 
     //checks if the given vector is within the given radius
