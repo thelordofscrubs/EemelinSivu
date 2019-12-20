@@ -269,7 +269,7 @@ function initializeCanvasContext() {
         //console.info(mapContext);
         overlayContext1 = overlayCanvas1.getContext("2d");
         //console.info(overLayContext1);
-        persSpriteContext = persSpriteCanvas.getContex("2d");
+        persSpriteContext = persSpriteCanvas.getContext("2d");
         console.info(mapContext, mapColorContext, spriteContext, overlayContext1, uiContext, persSpriteContext);
     }
 }
