@@ -22,14 +22,19 @@ canvas {
     z-index: 1;
 }
 
-#spriteCanvas {
+#persSpriteCanvas {
     position: absolute;
     z-index: 2;
 }
 
+#spriteCanvas {
+    position: absolute;
+    z-index: 3;
+}
+
 #overlayCanvas1 {
     position: absolute;
-    z-index:3;
+    z-index: 4;
 }
 
 #uiCanvas {

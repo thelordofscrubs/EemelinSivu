@@ -2,6 +2,8 @@ var mapCanvas;
 var mapContext;
 var spriteCanvas;
 var spriteContext;
+var persSpriteCanvas;
+var persSpriteContext;
 var mapColorCanvas;
 var mapColorContext;
 var overlayCanvas1;
@@ -145,6 +147,7 @@ function Spawner(team = 1, size = 1, position = new Vector2(20,20), upgradeLevel
         this.team = newTeam;
         this.health = 10;
         teams[this.team].changeSpawners(1);
+        drawSpawners();
     }
 
     this.heal = function() {
@@ -217,6 +220,7 @@ function startButtonPressed() {
     mapSetup(map.type);
     spawners = map.spawners;
     teams[1].changeSpawners(spawners.length-teams.length+1);
+    drawSpawners();
     drawLoopVar = setInterval(drawLoop, 50);
     gameLoopVar = setInterval(gameLoopFunction, 250);
     gameActive = true;
@@ -248,6 +252,7 @@ function initializeCanvasContext() {
     mapColorCanvas = document.getElementById("mapColorCanvas");
     spriteCanvas = document.getElementById("spriteCanvas");
     overlayCanvas1 = document.getElementById("overlayCanvas1");
+    persSpriteCanvas = document.getElementById("persSpriteCanvas");
     if (!spriteCanvas || !mapColorCanvas || !uiCanvas || !mapCanvas) {
         console.log("failed to grab a canvas, trying again in 1000ms");
         setTimeout(initializeCanvasContext(), 1000);
@@ -264,7 +269,8 @@ function initializeCanvasContext() {
         //console.info(mapContext);
         overlayContext1 = overlayCanvas1.getContext("2d");
         //console.info(overLayContext1);
-        console.info(mapContext, mapColorContext, spriteContext, overlayContext1, uiContext);
+        persSpriteContext = persSpriteCanvas.getContex("2d");
+        console.info(mapContext, mapColorContext, spriteContext, overlayContext1, uiContext, persSpriteContext);
     }
 }
 
@@ -325,9 +331,9 @@ function moveUnits() {
 function drawLoop() {
     spriteContext.clearRect(0,0,1000,750);
     drawUnits();
-    drawSpawners();
     uiContext.clearRect(0,0,1000,750);
     drawOverlay();
+
 }
 
 function drawOverlay() {
@@ -343,8 +349,8 @@ function spawnUnits() {
 
 function drawSpawners() {
     for (spawner of spawners) {
-        spriteContext.fillStyle = teams[spawner.team].color;
-        spriteContext.fillRect(spawner.position.x*10-5, spawner.position.y*10-20,spawner.size*10,spawner.size*10);
+        persSpriteContext.fillStyle = teams[spawner.team].color;
+        persSpriteContext.fillRect(spawner.position.x*10-5, spawner.position.y*10-20,spawner.size*10,spawner.size*10);
     }
 }
 
