@@ -8,11 +8,11 @@
     <script src="/JS/Navbar.js"></script>
     <script src="/JS/rtsGame.js"></script>
 </head>
-<body onload="initializeCanvasContext();setUpListeners();">
+<body onload="initializeCanvasContext();setUpListeners();getPageSizeAndCoords();">
 <div class="navbar" id="navbar">        
 </div>
 
-<div id="gameCanvas">
+<div id="gameContainer">
     <canvas id="mapCanvas" width=1000 height=750></canvas>
     <canvas id="mapColorCanvas" width=1000 height=750></canvas>
     <canvas id="spriteCanvas" width=1000 height=750></canvas>
