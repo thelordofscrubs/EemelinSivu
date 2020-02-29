@@ -423,7 +423,7 @@ function drawLoop() {
 
 function unitsFight() {
     //for () {
-
+                
     //}
 }
 
