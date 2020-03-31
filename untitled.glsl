@@ -26,6 +26,7 @@ vec2 coord(in vec2 p) {
 	p *= vec2(-1.0, 1.0);
 	return p;
 }
+
 #define rx 1.0 / min(u_resolution.x, u_resolution.y)
 #define uv gl_FragCoord.xy / u_resolution.xy
 #define st coord(gl_FragCoord.xy)
