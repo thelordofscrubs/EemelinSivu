@@ -1,2 +1,13 @@
 *.xml
-vk.xml
+
+*.firebaserc
+
+.firebase/
+
+firebase.json
+
+README*
+
+public/
+
+
